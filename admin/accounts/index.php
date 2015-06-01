@@ -74,9 +74,9 @@ $mysql = include '../../config.php';
             <center><button type="button" onclick="location.href='new'" class="ui button blue">Add a new user</button></center>
             <br>
             <div class="ui form segment">
-                Latest actions<br>
-                <table class="ui table table-hover table-bordered">
-                    <thead><th>User</th><th>IP</th><th>Action</th><th>Time</th></thead>
+                Latest actions<br><div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead><th>User</th><th>IP</th><th>Action</th><th>Time</th></thead><tbody>
                     <?php
                         
                         $query = "SELECT username, ip, action, time FROM swift_logs ORDER BY id DESC LIMIT 25";
@@ -88,8 +88,10 @@ $mysql = include '../../config.php';
                         
                     
                     ?>
-            </table>
+                </tbody>
+                </table></div>
             </div>
+            
         </div>
   
 <script>
