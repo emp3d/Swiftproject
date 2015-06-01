@@ -1,21 +1,8 @@
 <!DOCTYPE html>
 <?php
 session_start();
-$mysql = include '../config.php';
-    if (!isset($_SESSION['username']) && !isset($_SESSION['lastactive']) && !isset($_SESSION['ip']) && !isset($_SESSION['admin'])) {
-        die("<meta http-equiv=\"refresh\" content=\"0; url=login\" />");
-    }
-    $admin = $_SESSION['admin'];
-    if (!(password_verify($_SESSION['username'], $admin))) {
-        die("<meta http-equiv=\"refresh\" content=\"0; url=login\" />");
-    }
-    $lastactive = $_SESSION['lastactive'];
-    $time = time();
-    if ($time >= $lastactive + 600) { //10 minutoo
-        session_destroy();
-        die("<meta http-equiv=\"refresh\" content=\"0; url=login/?r=e\" />");
-    } else {
-        $_SESSION['lastactive'] = time();
+    if (!isset($_SESSION['username']) && !isset($_SESSION['lastactive']) && !isset($_SESSION['ip'])) {
+        die("<meta http-equiv=\"refresh\" content=\"0; url=../login\" />");
     }
 ?>
 <html>
@@ -49,7 +36,6 @@ $mysql = include '../config.php';
               <li class="active"><a href="#">Home</a></li>
               <li><a href="#">Gameservers</a></li>
               <li><a href="#">Host servers</a></li>
-              <li><a href="accounts/">Accounts</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="logout">Logout</a></li>
@@ -62,25 +48,16 @@ $mysql = include '../config.php';
   
             <table class="ui table table-hover table-bordered">
                 <thead><th>Servers</th></thead>
+                <tr>
+                <td>123</td>
+                </tr>
+                <tr>
+                <td>123</td>
+                </tr>
+                <tr>
+                <td>123</td>
+                </tr>
             </table>
-            
-            <div class="ui form segment">
-                Latest actions<br>
-                <table class="ui table table-hover table-bordered">
-                    <thead><th>User</th><th>IP</th><th>Action</th><th>Time</th></thead>
-                    <?php
-                        
-                        $query = "SELECT username, ip, action, time FROM swift_logs ORDER BY id DESC LIMIT 25";
-                        $result = mysqli_query($mysql, $query);
-                        while ($row = mysqli_fetch_array($result)) {
-                            $time = date("H:i, F j Y ", $row['time']);
-                            echo "<tr><td>" . $row['username'] . "</td><td>" . $row['ip'] . "</td><td>" . $row['action'] . "</td><td>$time</td></tr>";
-                        }
-                        
-                    
-                    ?>
-            </table>
-            </div>
         </div>
   
 <script>

@@ -38,7 +38,7 @@
         $txt = "<?php\n\$dbhost = \"" . $dbhost . "\";\n\$dbuser = \"" . $dbuser . "\";\n\$dbpass = \"" . $dbpass . "\";\n\$db = \"" . $db . "\";\n"
                 . "\n\$mysql = mysqli_connect(\$dbhost, \$dbuser, \$dbpass, \$db);\n"
                 . "if (!\$mysql) {\n\treturn \"Error in config.php file. Please check that you have set the right variables.<br>\";\n}\n"
-                . "return \$mysql;\n?>\n";
+                . "mysqli_set_charset(\$mysql, \"utf8\");\nreturn \$mysql;\n?>\n";
         
         fwrite($file, $txt);
         fclose($file);

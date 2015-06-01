@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <?php
+include '../../ip.php';
+$ip = getRealIP();
     if (isset($_REQUEST['user']) && isset($_REQUEST['pass'])) {
         createAccount();
         die("<meta http-equiv=\"refresh\" content=\"0; url=../finish/\" />");
     }
     
     function createAccount() {
+        global $ip;
         $user = $_REQUEST['user'];
-        $pass = $_REQUEST['pass'];
+        $pwd = $_REQUEST['pass'];
+        $pass = password_hash($pwd, PASSWORD_DEFAULT);
         $mysql = include '../../config.php';
-        $sql1 = "CREATE TABLE swift_admin (id INTEGER NOT NULL AUTO_INCREMENT, username VARCHAR(100) NOT NULL, password VARCHAR(100) NOT NULL, PRIMARY KEY (id))";
+        
+        $sql1 = "CREATE TABLE swift_admin (id INTEGER NOT NULL AUTO_INCREMENT, username VARCHAR(100) NOT NULL, password VARCHAR(255) NOT NULL, PRIMARY KEY(id), CONSTRAINT sw_unq UNIQUE (username))";
         $sql2 = "INSERT INTO swift_admin (username, password) VALUES ('$user', '$pass')";
+        $sql3 = "CREATE TABLE swift_logs (id INTEGER NOT NULL AUTO_INCREMENT, username VARCHAR(100), ip VARCHAR(15), action VARCHAR(255), time VARCHAR(255), PRIMARY KEY(id))";
+        $sql4 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('$user', '$ip', 'Installed Swiftproject!', '" . time() . "')";
+        $sql5 = "CREATE TABLE swift_servers (id INTEGER NOT NULL AUTO_INCREMENT, owner_id INTEGER NOT NULL, host_id INTEGER NOT NULL, account VARCHAR(100), password VARCHAR(100), active TINYINT(1), script VARCHAR(500), PRIMARY KEY(id))";
+        $sql6 = "CREATE TABLE swift_users (id INTEGER NOT NULL AUTO_INCREMENT, username VARCHAR(100) NOT NULL, password VARCHAR(255) NOT NULL, PRIMARY KEY(id), CONSTRAINT swu_unq UNIQUE (username))";
+        $sql7 = "CREATE TABLE swift_hosts (id INTEGER NOT NULL AUTO_INCREMENT, ip VARCHAR(15), user VARCHAR(100), pass VARCHAR(100), PRIMARY KEY(id))";
+        
         $result = mysqli_query($mysql, $sql1);
         if (!$result) {
             die(mysqli_error($mysql));
@@ -20,6 +31,12 @@
         if (!$result2) {
             die(mysqli_error($mysql));
         }
+        mysqli_query($mysql, $sql3);
+        
+        mysqli_query($mysql, $sql4);
+        mysqli_query($mysql, $sql5);
+        mysqli_query($mysql, $sql6);
+        mysqli_query($mysql, $sql7);
     }
 ?>
 <html>
