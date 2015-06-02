@@ -49,7 +49,7 @@ $mysql = include '../../config.php';
               <li><a href="../">Home</a></li>
               <li><a href="../gs">Gameservers</a></li>
               <li class="active"><a href="#">Host servers</a></li>
-              <li><a href="#">Accounts</a></li>
+              <li><a href="../accounts/">Accounts</a></li>
               <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Logs <span class="caret"></span></a>
                   <ul class="dropdown-menu" role="menu">
