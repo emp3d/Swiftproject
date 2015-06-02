@@ -52,8 +52,8 @@ $mysql = include '../../../config.php';
             <ul class="nav navbar-nav">
               <li><a href="../../">Home</a></li>
               <li><a href="../../gs">Gameservers</a></li>
-              <li><a href="../../hs">Host servers</a></li>
-              <li class="active"><a href="../">Accounts</a></li>
+              <li class="active"><a href="../">Host servers</a></li>
+              <li><a href="../../accounts/">Accounts</a></li>
               <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Logs <span class="caret"></span></a>
                   <ul class="dropdown-menu" role="menu">
@@ -70,50 +70,64 @@ $mysql = include '../../../config.php';
       </nav>
         <div class="container"> <br><br>
             <div class="ui form segment">
-                <form method="get">
-                    <?php
-                    if (isset($_REQUEST['user']) && isset($_REQUEST['password'])) {
+                <?php
+                    if (isset($_REQUEST['ip']) && isset($_REQUEST['user']) && isset($_REQUEST['password']) && isset($_REQUEST['os'])) {
+                        $srvip = $_REQUEST['ip'];
                         $user = $_REQUEST['user'];
-                        $password = $_REQUEST['password'];
-                        $pass = password_hash($password, PASSWORD_DEFAULT);
-                        $isAdmin = isset($_REQUEST['isAdmin']);
-                        $query = "";
-                        if ($isAdmin) {
-                            $query = "INSERT INTO swift_admin(username, password) VALUES('$user', '$pass')";
-                        } else {
-                            $query = "INSERT INTO swift_users(username, password) VALUES('$user', '$pass')";
-                        }
-                        $result = mysqli_query($mysql, $query);
-                        if (!$result) {
-                            $error = true;
-                        }
-                        $query = "INSERT INTO swift_logs (username, ip, action, time) VALUES('$username', '$ip', 'Created account $user', '" . time() . "')";
-                        if (!$error) {
+                        $pass = $_REQUEST['password'];
+                        $os = $_REQUEST['os'];
+                        //lets test SSH prior.
+                        $connection = ssh2_connect($srvip, 22);
+                        ssh2_auth_password($connection, $user, $pass);
+                        $output = ssh2_exec($connection, "whoami");
+                        stream_set_blocking($output, true);
+                        $stream_out = ssh2_fetch_stream($output, SSH2_STREAM_STDIO);
+                        $whoami = stream_get_contents($output);
+                        if (!strcmp(trim($whoami), "root")) { 
+                            $query = "INSERT INTO swift_hosts(ip, user, pass, islinux) VALUES('$srvip', '$user', '$pass', '$os')";
                             $result = mysqli_query($mysql, $query);
-                            echo "<h2>Account $user with the password $password has been created!</h2>";
-                        }
-                        if ($error) {
-                            echo "<h2>Account $user already exists in the database!</h2>";
+                            if (!$result) {
+                                die(mysqli_error($mysql));
+                            }
+                            mysqli_query($mysql, "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$username', '$ip', 'Added new server with IP $srvip', '" . time() . ")')");
+                            
+                            echo "<h2>Server with the IP $srvip has been added to the system!</h2>";
+                        } else {
+                            echo "<h2>Couldn't SSH to server with the IP $ip with account $user.</h2>";
                         }
                     } else {
-                        echo "<h2>Fill in the fields</h2>";
+                        echo "<h2>Enter the server information below</h2>";
                     }
-                    ?>
+                
+                ?>
+                
+                <form method="get" id="srv">
+                    <div class="field">
+                        <label for="ip">IP</label>
+                        <input id="ip" placeholder="Type in the host server IP" type="text" name="ip" required />
+                    </div>
                     <div class="field">
                         <label for="username">Username</label>
-                        <input id="username" placeholder="Type in the username which you want to create" type="text" name="user" required />
+                        <input id="username" placeholder="Type in the username of the host server" type="text" name="user" required />
                     </div>
 
                     <div class="field">
                         <label for="password">Password</label>
-                        <input id="password" placeholder="Type in the password which you want to create" type="password" name="password" required >
+                        <input id="password" placeholder="Type in the password of the host server" type="password" name="password" required >
                     </div>
-                    <div class="ui toggle checkbox">
-                        <input type="checkbox" name="isAdmin">
-                        <label>Set administrative privileges</label>
-                    </div>
+                    <label for="sel">Operation system</label>
                     <br>
-                    <button type="submit" class="ui button blue">Create user</button>
+                    <div id="sel" class="ui selection dropdown">
+                        <input type="hidden" name="os" value="1">
+                        <div class="default text">UNIX</div>
+                        <i class="dropdown icon"></i>
+                        <div class="menu">
+                            <div class="item" data-value="1">UNIX</div>
+                            <div class="item" data-value="0">Windows</div>
+                        </div>
+                    </div>
+                    <br><br>
+                    <button type="submit" class="ui button blue">Add host server</button>
                 </form>
             </div>
         </div>
@@ -124,6 +138,7 @@ jQuery('ul.nav li.dropdown').hover(function() {
 }, function() {
  jQuery(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut();
 });
+$('.ui.dropdown').dropdown();
 </script>
     </body>
 </html>

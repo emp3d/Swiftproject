@@ -3,17 +3,17 @@
 session_start();
 $mysql = include '../../config.php';
     if (!isset($_SESSION['username']) && !isset($_SESSION['lastactive']) && !isset($_SESSION['ip']) && !isset($_SESSION['admin'])) {
-        die("<meta http-equiv=\"refresh\" content=\"0; url=login\" />");
+        die("<meta http-equiv=\"refresh\" content=\"0; url=../login\" />");
     }
     $admin = $_SESSION['admin'];
     if (!(password_verify($_SESSION['username'], $admin))) {
-        die("<meta http-equiv=\"refresh\" content=\"0; url=login\" />");
+        die("<meta http-equiv=\"refresh\" content=\"0; url=../login\" />");
     }
     $lastactive = $_SESSION['lastactive'];
     $time = time();
     if ($time >= $lastactive + 600) { //10 minutoo
         session_destroy();
-        die("<meta http-equiv=\"refresh\" content=\"0; url=login/?r=e\" />");
+        die("<meta http-equiv=\"refresh\" content=\"0; url=../login/?r=e\" />");
     } else {
         $_SESSION['lastactive'] = time();
     }
@@ -46,10 +46,17 @@ $mysql = include '../../config.php';
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Gameservers</a></li>
-              <li><a href="#">Host servers</a></li>
-              <li class="active"><a href="accounts/">Accounts</a></li>
+              <li><a href="../">Home</a></li>
+              <li><a href="../gs">Gameservers</a></li>
+              <li><a href="../hs">Host servers</a></li>
+              <li class="active"><a href="#">Accounts</a></li>
+              <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Logs <span class="caret"></span></a>
+                  <ul class="dropdown-menu" role="menu">
+                      <li><a href="../logs/action/">Action log</a></li>
+                      <li><a href="../logs/login/">Login log</a></li>
+                  </ul>
+              </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="../logout">Logout</a></li>
@@ -95,11 +102,11 @@ $mysql = include '../../config.php';
         </div>
   
 <script>
-$(".dropdown")
-  .dropdown({
-    transition: 'horizontal drop'
-  });
-;
+jQuery('ul.nav li.dropdown').hover(function() {
+ jQuery(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn();
+}, function() {
+ jQuery(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut();
+});
 </script>
     </body>
 </html>

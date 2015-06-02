@@ -47,8 +47,8 @@ $mysql = include '../config.php';
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li class="active"><a href="#">Home</a></li>
-              <li><a href="#">Gameservers</a></li>
-              <li><a href="#">Host servers</a></li>
+              <li><a href="gs/">Gameservers</a></li>
+              <li><a href="hs/">Host servers</a></li>
               <li><a href="accounts/">Accounts</a></li>
               <li class="dropdown"><!--<div class="ui pointing dropdown link item">
                   <span class="text">Logs</span>

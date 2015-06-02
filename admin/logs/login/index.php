@@ -55,20 +55,20 @@ $page = setPage();
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Gameservers</a></li>
-              <li><a href="#">Host servers</a></li>
-              <li><a href="accounts/">Accounts</a></li>
+              <li><a href="../../">Home</a></li>
+              <li><a href="../../gs">Gameservers</a></li>
+              <li><a href="../../hs">Host servers</a></li>
+              <li><a href="../../accounts/">Accounts</a></li>
               <li class="dropdown active">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Logs <span class="caret"></span></a>
                   <ul class="dropdown-menu" role="menu">
-                      <li><a href="logs/action/">Action log</a></li>
-                      <li><a href="logs/login/">Login log</a></li>
+                      <li><a href="../action/">Action log</a></li>
+                      <li class="active"><a href="#">Login log</a></li>
                   </ul>
               </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="logout">Logout</a></li>
+              <li><a href="../../logout">Logout</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
@@ -97,12 +97,23 @@ $page = setPage();
             </table>
                 </div>
                 <div class="ui pagination menu">
-                    <a class="icon item">
+                    <?php
+                        $pagination = 0;
+                        $rpage = isset($_REQUEST['page'])? $_REQUEST['page'] : 1;
+                        $href1 = "#";
+                        $href2 = "#";
+                        if ($rpage > 1) {
+                            $href1 = $rpage - 1;
+                        }
+                        if ($countint >= $rpage) {
+                            $href2 = $rpage + 1;
+                        }
+                    ?>
+                    <a class="icon item" href="<?php if ($href1 == "#") {echo $href1;} else {echo "?page=$href1";} ?>">
                         <i class="left arrow icon"></i>
                     </a>
                     <?php
-                    $pagination = 0;
-                    $rpage = isset($_REQUEST['page'])? $_REQUEST['page'] : 1;
+                    
                         while ($pagination <= $countint) {
                             $pagination++;
                             if ($pagination == $rpage) {
@@ -113,9 +124,8 @@ $page = setPage();
                         }
                             
                     ?>
-                    <a class="icon item">
+                    <a class="icon item" href="<?php if ($href2 == "#") {echo $href2;} else {echo "?page=$href2";} ?>">
                         <i class="right arrow icon"></i>
-                    </a>
                     </a>
                 </div>
             </div>

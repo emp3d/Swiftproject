@@ -20,7 +20,7 @@ $ip = getRealIP();
         $sql4 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('$user', '$ip', 'Installed Swiftproject!', '" . time() . "')";
         $sql5 = "CREATE TABLE swift_servers (id INTEGER NOT NULL AUTO_INCREMENT, owner_id INTEGER NOT NULL, host_id INTEGER NOT NULL, account VARCHAR(100), password VARCHAR(100), active TINYINT(1), script VARCHAR(500), PRIMARY KEY(id))";
         $sql6 = "CREATE TABLE swift_users (id INTEGER NOT NULL AUTO_INCREMENT, username VARCHAR(100) NOT NULL, password VARCHAR(255) NOT NULL, PRIMARY KEY(id), CONSTRAINT swu_unq UNIQUE (username))";
-        $sql7 = "CREATE TABLE swift_hosts (id INTEGER NOT NULL AUTO_INCREMENT, ip VARCHAR(15), user VARCHAR(100), pass VARCHAR(100), PRIMARY KEY(id))";
+        $sql7 = "CREATE TABLE swift_hosts (id INTEGER NOT NULL AUTO_INCREMENT, ip VARCHAR(15) NOT NULL, user VARCHAR(100) NOT NULL, pass VARCHAR(100) NOT NULL, islinux TINYINT(1), PRIMARY KEY(id), CONSTRAINT sw_hunq UNIQUE(ip))";
         $sql8 = "CREATE TABLE swift_loginlog(id INTEGER NOT NULL AUTO_INCREMENT, user VARCHAR(100), ip VARCHAR(15), date VARCHAR(50), PRIMARY KEY(id))";
         $result = mysqli_query($mysql, $sql1);
         if (!$result) {
