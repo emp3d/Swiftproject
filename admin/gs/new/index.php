@@ -61,8 +61,8 @@ $mysql = include '../../../config.php';
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li><a href="../../">Home</a></li>
-              <li><a href="../../gs">Gameservers</a></li>
-              <li class="active"><a href="../">Host servers</a></li>
+              <li class="active"><a href="../">Gameservers</a></li>
+              <li><a href="../../hs">Host servers</a></li>
               <li><a href="../../accounts/">Accounts</a></li>
               <li><a href="../../game/">Games</a></li>
               <li class="dropdown">
@@ -82,63 +82,167 @@ $mysql = include '../../../config.php';
         <div class="container"> <br><br>
             <div class="ui form segment">
                 <?php
-                    if (isset($_REQUEST['ip']) && isset($_REQUEST['user']) && isset($_REQUEST['password']) && isset($_REQUEST['os'])) {
-                        $srvip = $_REQUEST['ip'];
-                        $user = $_REQUEST['user'];
-                        $pass = $_REQUEST['password'];
-                        $os = $_REQUEST['os'];
-                        //lets test SSH prior.
-                        $connection = ssh2_connect($srvip, 22);
-                        ssh2_auth_password($connection, $user, $pass);
-                        $output = ssh2_exec($connection, "whoami");
-                        stream_set_blocking($output, true);
-                        $stream_out = ssh2_fetch_stream($output, SSH2_STREAM_STDIO);
-                        $whoami = stream_get_contents($output);
-                        if (!strcmp(trim($whoami), $user)) { 
-                            $query = "INSERT INTO swift_hosts(ip, user, pass, islinux) VALUES('$srvip', '$user', '$pass', '$os')";
-                            $result = mysqli_query($mysql, $query);
-                            if (!$result) {
-                                die(mysqli_error($mysql));
-                            }
-                            mysqli_query($mysql, "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$username', '$ip', 'Added new server with IP $srvip', '" . time() . ")')");
-                            
-                            echo "<h2>Server with the IP $srvip has been added to the system!</h2>";
+                    if (isset($_REQUEST['name']) && isset($_REQUEST['host']) && isset($_REQUEST['owner']) && isset($_REQUEST['game'])) {
+                        $hostId = intval(trim($_REQUEST['host']));
+                        $owner = intval(trim($_REQUEST['owner']));
+                        $name = $_REQUEST['name'];
+                        $getPort = "SELECT port FROM swift_servers ORDER BY port DESC LIMIT 1";
+                        $result = mysqli_query($mysql, $getPort);
+                        $row = mysqli_fetch_array($result);
+                        $port = 0;
+                        if ($row) {
+                            $port = intval(trim($row['port'])) + 1;
                         } else {
-                            echo "<h2>Couldn't SSH to server with the IP $ip with account $user.</h2>";
+                            $port = 20100;
                         }
+                        $accountQuery = "SELECT account FROM swift_servers ORDER BY id DESC LIMIT 1";
+                        $result = mysqli_query($mysql, $accountQuery);
+                        $row = mysqli_fetch_array($result);
+                        $account = "";
+                        if ($row) {
+                            $getAccount = $row['account'];
+                            $getAccount = intval(substr_replace($getAccount, "", 0, 3));
+                            $getAccount++;
+                            $account = "srv" . $getAccount;
+                        } else {
+                            $account = "srv1";
+                        }
+                        $accpass = getPassword();
+                        $hostAccPass = "SELECT user, pass, ip, sshport, islinux FROM swift_hosts WHERE id=$hostId";
+                        $result = mysqli_query($mysql, $hostAccPass);
+                        $row = mysqli_fetch_array($result);
+                        $hostAcc = trim($row['user']);
+                        $hostPass = trim($row['pass']);
+                        $hostIp = trim($row['ip']);
+                        $sshport = intval(trim($row['sshport']));
+                        $connection = ssh2_connect($hostIp, $sshport);
+                        
+                        ssh2_auth_password($connection, $hostAcc, $hostPass);
+                        $command1 = $command2 = "";
+                        
+                        $isLinux = intval(trim($row['islinux']));
+                        $gameId = intval(trim($_REQUEST['game']));
+                        $startupScript = "SELECT startcmd, location FROM swift_game WHERE id=$gameId";
+                        $result = mysqli_fetch_array(mysqli_query($mysql, $startupScript));
+                        $filesLocation = trim($result['location']);
+                        if ($isLinux == 1) {
+                            $command1 = "useradd -m $account";
+                            $command2 = "echo \"$account:$accpass\" | chpasswd";
+                            $command3 = "cp -R $filesLocation /home/$account/";
+                            $command4 = "chown -R $account /home/$account";
+                            //ssh2_exec($connection, $command1);
+                            //ssh2_exec($connection, $command2);cmd /c mklink /d "C:\Users\Janno\test\base" "C:\Games\SoF2 - 1.00\base"
+                        } else {
+                            $command1 = "cmd /c net user /add $account $accpass";
+                            $command2 = "cmd /c xcopy /s $filesLocation C:/Users/$account/";
+                            //ssh2_exec($connection, $command1);
+                            //ssh2_exec($connection, $command2);
+                            ssh2_exec($connection, $command);
+                        }
+                        
+                        
+                        
+                        $startcmd = trim($result['startcmd']);
+                        $startcmd = str_replace("{port}", $port, $startcmd);
+                        $startcmd = str_replace("{user}", $account, $startcmd);
+                        $query = "INSERT INTO swift_servers(owner_id, host_id, account, password, script, name, port) VALUES('$owner', '$hostId', '$account', '$accpass', '$startcmd', '$name', '$port')";
+                        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$username', '$ip', 'Added a new server with name $name', '" . time() . "')";
+                        $result = mysqli_query($mysql, $query);
+                        if (!$result) {
+                            die(mysqli_error($mysql));
+                        }
+                        $result = mysqli_query($mysql, $log);
+                        if (!$result) {
+                            die(mysqli_error($mysql));
+                        }
+                        echo "<h2>Server $name successfully added!</h2>";
                     } else {
-                        echo "<h2>Enter the server information below</h2>";
+                        echo "<h2>Put the server information below</h2>";
                     }
                 
                 ?>
                 
                 <form method="get" id="srv">
                     <div class="field">
-                        <label for="ip">IP</label>
-                        <input id="ip" placeholder="Type in the host server IP" type="text" name="ip" required />
+                        <label for="name">Server name</label>
+                        <input id="name" placeholder="Type in a friendly name for the server" type="text" name="name" required />
                     </div>
-                    <div class="field">
-                        <label for="username">Username</label>
-                        <input id="username" placeholder="Type in the username of the host server" type="text" name="user" required />
-                    </div>
-
-                    <div class="field">
-                        <label for="password">Password</label>
-                        <input id="password" placeholder="Type in the password of the host server" type="password" name="password" required >
-                    </div>
-                    <label for="sel">Operation system</label>
+                    <label for="sel1">Host server</label>
                     <br>
-                    <div id="sel" class="ui selection dropdown">
-                        <input type="hidden" name="os" value="1">
-                        <div class="default text">UNIX</div>
+                    <div id="sel1" class="ui selection dropdown">
+                        <div class="default text">Server</div>
                         <i class="dropdown icon"></i>
                         <div class="menu">
-                            <div class="item" data-value="1">UNIX</div>
-                            <div class="item" data-value="0">Windows</div>
+                        <?php
+                            $query = "SELECT id, name FROM swift_hosts";
+                            $result = mysqli_query($mysql, $query);
+                            $firstHostID = -1;
+                            $isData = false;
+                            
+                            while ($row = mysqli_fetch_array($result)) {
+                                $isData = true;
+                                if ($firstHostID == -1) {
+                                    $firstHostID = $row['id'];
+                                }
+                                echo "<div class=\"item\" data-value=\"" . $row['id'] . "\">" . $row['name'] . "</div>";
+                            }
+                        
+                        ?>
+                        <input type="hidden" name="host" value="<?php echo $firstHostID; ?>">
+                        </div>
+                    </div><br><br>
+                    <label for="sel2">Owner</label>
+                    <br>
+                    <div id="sel2" class="ui selection dropdown">
+                        <div class="default text">Owner account</div>
+                        <i class="dropdown icon"></i>
+                        <div class="menu">
+                        <?php
+                            $query = "SELECT id, username FROM swift_users";
+                            $result = mysqli_query($mysql, $query);
+                            $firstHostID = -1;
+                            $isData = false;
+                            
+                            while ($row = mysqli_fetch_array($result)) {
+                                $isData = true;
+                                if ($firstHostID == -1) {
+                                    $firstHostID = $row['id'];
+                                }
+                                echo "<div class=\"item\" data-value=\"" . $row['id'] . "\">" . $row['username'] . "</div>";
+                            }
+                        
+                        ?>
+                        <input type="hidden" name="owner" value="<?php echo $firstHostID; ?>">
                         </div>
                     </div>
                     <br><br>
-                    <button type="submit" class="ui button blue">Add host server</button>
+                    <label for="sel3">Game</label>
+                    <br>
+                    <div id="sel3" class="ui selection dropdown">
+                        <div class="default text">Select the game</div>
+                        <i class="dropdown icon"></i>
+                        <div class="menu">
+                        <?php
+                            $query = "SELECT id, name FROM swift_game";
+                            $result = mysqli_query($mysql, $query);
+                            $firstHostID = -1;
+                            $isData = false;
+                            
+                            while ($row = mysqli_fetch_array($result)) {
+                                $isData = true;
+                                if ($firstHostID == -1) {
+                                    $firstHostID = $row['id'];
+                                }
+                                echo "<div class=\"item\" data-value=\"" . $row['id'] . "\">" . $row['name'] . "</div>";
+                            }
+                        
+                        ?>
+                        <input type="hidden" name="game" value="<?php echo $firstHostID; ?>">
+                        </div>
+                    </div>
+                    <br><br>
+                    
+                    <button type="submit" class="ui button blue">Add game server</button>
                 </form>
             </div>
         </div>

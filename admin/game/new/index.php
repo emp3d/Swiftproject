@@ -21,6 +21,7 @@ $mysql = include '../../../config.php';
     $username = $_SESSION['username'];
     $ip = $_SESSION['ip'];
     
+    
 ?>
 <html>
     <head>
@@ -52,9 +53,9 @@ $mysql = include '../../../config.php';
             <ul class="nav navbar-nav">
               <li><a href="../../">Home</a></li>
               <li><a href="../../gs">Gameservers</a></li>
-              <li class="active"><a href="../">Host servers</a></li>
+              <li><a href="../../hs/">Host servers</a></li>
               <li><a href="../../accounts/">Accounts</a></li>
-              <li><a href="../../game/">Games</a></li>
+              <li class="active"><a href="../">Games</a></li>
               <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Logs <span class="caret"></span></a>
                   <ul class="dropdown-menu" role="menu">
@@ -72,61 +73,49 @@ $mysql = include '../../../config.php';
         <div class="container"> <br><br>
             <div class="ui form segment">
                 <?php
-                    if (isset($_REQUEST['ip']) && isset($_REQUEST['user']) && isset($_REQUEST['password']) && isset($_REQUEST['os'])) {
-                        $srvip = $_REQUEST['ip'];
-                        $user = $_REQUEST['user'];
-                        $pass = $_REQUEST['password'];
-                        $sshport = $_REQUEST['ssh'];
-                        $sshport = intval($sshport);
-                        if (!is_int($sshport) || $sshport == 0 || $sshport == 1) {
-                            $sshport = 22;
-                        }
-                        $os = $_REQUEST['os'];
-                        //lets test SSH prior.
-                        $connection = ssh2_connect($srvip, $sshport);
-                        ssh2_auth_password($connection, $user, $pass);
-                        $output = ssh2_exec($connection, "whoami");
-                        stream_set_blocking($output, true);
-                        $stream_out = ssh2_fetch_stream($output, SSH2_STREAM_STDIO);
-                        $whoami = stream_get_contents($output);
-                        if (!strcmp(trim($whoami), $user)) { 
-                            $query = "INSERT INTO swift_hosts(ip, user, pass, islinux, sshport) VALUES('$srvip', '$user', '$pass', '$os', '$sshport')";
-                            $result = mysqli_query($mysql, $query);
-                            if (!$result) {
-                                die(mysqli_error($mysql));
-                            }
-                            mysqli_query($mysql, "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$username', '$ip', 'Added new server with IP $srvip', '" . time() . ")')");
-                            
-                            echo "<h2>Server with the IP $srvip has been added to the system!</h2>";
+                    if (isset($_REQUEST['game']) && isset($_REQUEST['location']) && isset($_REQUEST['startcmd']) && isset($_REQUEST['os'])) {
+                        $game = $_REQUEST['game'];
+                        $location = $_REQUEST['location'];
+                        $cmd = $_REQUEST['startcmd'];
+                        $islinux = intval($_REQUEST['os']);
+                        $os = "";
+                        if ($islinux == 1) {
+                            $os = "Linux";
                         } else {
-                            echo "<h2>Couldn't SSH to server with the IP $ip with account $user.</h2>";
+                            $os = "Windows";
                         }
+                        $query = "INSERT INTO swift_game (name, location, startcmd, islinux) VALUES ('$game', '$location', '$cmd', '$islinux')";
+                        $log = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('$username', '$ip', 'Added a new game called $game for $os', '" . time() . "')";
+                        $result = mysqli_query($mysql, $query);
+                        if (!$result) {
+                            die(mysqli_error($mysql));
+                        }
+                        $result = mysqli_query($mysql, $log);
+                        
+                        if (!$result) {
+                            die(mysqli_error($mysql));
+                        }
+                        echo "<h2>Game $game for $os has been successfully added!</h2>";
                     } else {
-                        echo "<h2>Enter the server information below</h2>";
-                    }
-                
+                        echo "<h2>Enter the game data below</h2>";
+                    }                
                 ?>
                 
                 <form method="get" id="srv">
                     <div class="field">
-                        <label for="ip">IP</label>
-                        <input id="ip" placeholder="Type in the host server IP" type="text" name="ip" required />
+                        <label for="name">Game name</label>
+                        <input id="name" placeholder="Type in a friendly name for the game" type="text" name="game" required />
                     </div>
                     <div class="field">
-                        <label for="ssh">SSH Port</label>
-                        <input id="ssh" placeholder="Type in the host server SSH port (default 22)" type="number" name="ssh" required />
-                    </div>
-                    <div class="field">
-                        <label for="username">Username</label>
-                        <input id="username" placeholder="Type in the username of the host server" type="text" name="user" required />
+                        <label for="location">Game location on host</label>
+                        <input id="location" placeholder="Type in the location for the game files (base folder)" type="text" name="location" required />
                     </div>
 
                     <div class="field">
-                        <label for="password">Password</label>
-                        <input id="password" placeholder="Type in the password of the host server" type="password" name="password" required >
+                        <label for="startcmd">Start command</label>
+                        <textarea class="ui textarea" id="startcommand" placeholder="Type in the command which starts the gameserver" type="text" name="startcmd" required ></textarea>
                     </div>
-                    
-                    <label for="sel">Operation system</label>
+                    <label for="sel">Operating system</label>
                     <br>
                     <div id="sel" class="ui selection dropdown">
                         <input type="hidden" name="os" value="1">
@@ -138,7 +127,7 @@ $mysql = include '../../../config.php';
                         </div>
                     </div>
                     <br><br>
-                    <button type="submit" class="ui button blue">Add host server</button>
+                    <button type="submit" class="ui button blue">Add new game</button>
                 </form>
             </div>
         </div>

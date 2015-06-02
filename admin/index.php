@@ -67,14 +67,17 @@ $mysql = include '../config.php';
       </nav>
         <div class="container"> <br><br>
   
-  
+            <div class="table-responsive">
             <table class="ui table table-hover table-bordered">
                 <thead><th>Servers</th></thead>
             </table>
             
+            </div>
+            
             <div class="ui form segment">
                 Latest actions<br>
-                <table class="ui table table-hover table-bordered">
+                <div class="table-responsive">
+                <table class="table table-hover table-bordered">
                     <thead><th>User</th><th>IP</th><th>Action</th><th>Time</th></thead>
                     <?php
                         
@@ -88,8 +91,10 @@ $mysql = include '../config.php';
                     
                     ?>
             </table>
+                
             </div>
         </div>
+    </div>
   
 <script>
 jQuery('ul.nav li.dropdown').hover(function() {

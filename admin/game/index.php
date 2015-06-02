@@ -71,7 +71,7 @@ $mysql = include '../../config.php';
             <table class="table table-hover table-bordered">
                 <thead><th>Game name</th><th>Game location</th><th>Start command</th><th>Operation system</th></thead>
                 <?php
-                    $query = "SELECT * FROM swift_hosts ORDER BY id ASC";
+                    $query = "SELECT * FROM swift_game ORDER BY id ASC";
                     $result = mysqli_query($mysql, $query);
                     $data = false;
                     
@@ -79,10 +79,10 @@ $mysql = include '../../config.php';
                     while ($row = mysqli_fetch_array($result)) { 
                         $data = true;
                         $os = $row['islinux'] == 1 ? "Linux" : "Windows";
-                        echo "<tr><td>" . $row['ip'] . "</td><td>" . $row['user'] . "</td><td>$os</td><td>TODO ID - " . $row['id'] . "</td></tr>";
+                    echo "<tr><td>" . $row['name'] . "</td><td>" . $row['location'] . "</td><td>" . $row['startcmd'] . "</td><td>$os</td></tr>";
                     }
                     if (!$data) {
-                        echo "<tr class=\"no-records-found\"><td colspan=\"4\">No records found. You can add a new host machine by clicking the Add new host button.</td></tr>";
+                        echo "<tr class=\"no-records-found\"><td colspan=\"4\">No records found. You can add a new game by clicking the Add new game button.</td></tr>";
                     }
                 
                 ?>
@@ -90,7 +90,7 @@ $mysql = include '../../config.php';
       
   </div>
       <br>
-      <button type="button" class="ui button blue" onclick="location.href='new'">Add new host</button>
+      <button type="button" class="ui button blue" onclick="location.href='new'">Add new game</button>
   </div>
         </div>
   
