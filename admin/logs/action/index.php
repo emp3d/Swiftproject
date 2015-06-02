@@ -69,6 +69,7 @@ $page = setPage();
               </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                <li><a href="../../preferences"><i class="setting icon"></i>Preferences</a></li>
               <li><a href="../../logout">Logout</a></li>
             </ul>
           </div><!--/.nav-collapse -->

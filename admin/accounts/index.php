@@ -60,15 +60,18 @@ $mysql = include '../../config.php';
               </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                <li><a href="../preferences"><i class="setting icon"></i>Preferences</a></li>
               <li><a href="../logout">Logout</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
       </nav>
         <div class="container"> <br><br>
-  
-  
-            <table class="ui table table-hover table-bordered">
+        <div class="ui form segment">
+            <h3>Normal accounts</h3>
+            <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                
                 <thead><th>Username</th><th>Options</th></thead>
                 <?php
                 $query = "SELECT id, username FROM swift_users ORDER BY id ASC";
@@ -78,11 +81,23 @@ $mysql = include '../../config.php';
                 }
                 
                 ?>
-            </table>
+            </table></div>
+            <h3>Administrator accounts</h3><div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                
+                <thead><th>Username</th><th>Options</th></thead>
+                <?php
+                $query = "SELECT id, username FROM swift_admin ORDER BY id ASC";
+                $result = mysqli_query($mysql, $query);
+                while ($row = mysqli_fetch_array($result)) {
+                    echo "<tr><td>" . $row['username'] . "</td><td>TODO ID - " . $row['id'];
+                }
+                
+                ?>
+            </table></div>
             <center><button type="button" onclick="location.href='new'" class="ui button blue">Add a new user</button></center>
-            <br>
-            <div class="ui form segment">
-                Latest actions<br><div class="table-responsive">
+            
+            <h3>Latest actions</h3><br><div class="table-responsive">
                 <table class="table table-bordered table-hover">
                     <thead><th>User</th><th>IP</th><th>Action</th><th>Time</th></thead><tbody>
                     <?php
