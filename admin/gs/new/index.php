@@ -21,6 +21,16 @@ $mysql = include '../../../config.php';
     $username = $_SESSION['username'];
     $ip = $_SESSION['ip'];
     
+    function getPassword() {
+        $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
+        $password = "";
+        for ($i = 0; $i < 6; $i++) {
+            $randomInt = rand(0, strlen($alphabet) - 1);
+            $password .= $alphabet[$randomInt];
+        }
+        return $password;
+    }
+    
 ?>
 <html>
     <head>
