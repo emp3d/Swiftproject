@@ -2,19 +2,22 @@
 <?php
     session_start();
     $error = false;
+$mysql = include "../../config.php";
+if (!($mysql instanceof mysqli)) {
+            die($mysql);
+        }
     include '../../ip.php';
     $ip = getRealIP();
     if (isset($_REQUEST['user']) && isset($_REQUEST['password'])) {
+
         authenticate($_REQUEST['user'], $_REQUEST['password']);
     }
     
     function authenticate($user, $pass) {
-        global $error, $ip;
+        global $error, $ip, $mysql;
         $user = htmlentities($user);
-        $mysql = include "../../config.php";
-        if (!($mysql instanceof mysqli)) {
-            die($mysql);
-        }
+        
+        
         $query = "SELECT * FROM swift_admin WHERE username='$user'";
         $result = mysqli_fetch_array(mysqli_query($mysql, $query));
         print_r($result);
@@ -40,6 +43,16 @@
         } else {
             $error = true;
         }
+    }
+    
+    if ($error) {
+        $user = $_REQUEST['user'];
+        $user = htmlentities($user);
+        echo $user;
+        $user = mysqli_real_escape_string($mysql, $user);
+        $query = "INSERT INTO swift_loginlog (user, ip, date) VALUES ('$user', '$ip', '" . time() . "')";
+        mysqli_query($mysql, $query);
+        echo $user . "<br>" . $query;
     }
     
 
