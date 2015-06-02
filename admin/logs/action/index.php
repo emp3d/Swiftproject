@@ -59,6 +59,7 @@ $page = setPage();
               <li><a href="../../gs">Gameservers</a></li>
               <li><a href="../../hs">Host servers</a></li>
               <li><a href="../../accounts">Accounts</a></li>
+              <li><a href="../../game/">Games</a></li>
               <li class="dropdown active">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Logs <span class="caret"></span></a>
                   <ul class="dropdown-menu" role="menu">

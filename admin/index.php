@@ -50,15 +50,8 @@ $mysql = include '../config.php';
               <li><a href="gs/">Gameservers</a></li>
               <li><a href="hs/">Host servers</a></li>
               <li><a href="accounts/">Accounts</a></li>
-              <li class="dropdown"><!--<div class="ui pointing dropdown link item">
-                  <span class="text">Logs</span>
-                  <i class="dropdown icon"></i>
-                  <div class="menu">
-                      <div class="header">Pick the log type</div>
-                      <div class="item">Login logs</div>
-                      <div class="item">Action logs</div>
-                  </div>
-                  </div>-->
+              <li><a href="game/">Games</a></li>
+              <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Logs <span class="caret"></span></a>
                   <ul class="dropdown-menu" role="menu">
                       <li><a href="logs/action/">Action log</a></li>

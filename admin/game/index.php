@@ -48,9 +48,9 @@ $mysql = include '../../config.php';
             <ul class="nav navbar-nav">
               <li><a href="../">Home</a></li>
               <li><a href="../gs">Gameservers</a></li>
-              <li class="active"><a href="#">Host servers</a></li>
+              <li><a href="../hs">Host servers</a></li>
               <li><a href="../accounts/">Accounts</a></li>
-              <li><a href="../game/">Games</a></li>
+              <li class="active"><a href="#">Games</a></li>
               <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Logs <span class="caret"></span></a>
                   <ul class="dropdown-menu" role="menu">
@@ -69,7 +69,7 @@ $mysql = include '../../config.php';
   <div class="ui form segment">
   <div class="table-responsive">
             <table class="table table-hover table-bordered">
-                <thead><th>Server IP</th><th>Server account</th><th>Server OS</th><th>Options</th></thead>
+                <thead><th>Game name</th><th>Game location</th><th>Start command</th><th>Operation system</th></thead>
                 <?php
                     $query = "SELECT * FROM swift_hosts ORDER BY id ASC";
                     $result = mysqli_query($mysql, $query);
