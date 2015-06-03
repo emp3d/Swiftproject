@@ -126,26 +126,35 @@ $mysql = include '../../../config.php';
                         $startupScript = "SELECT startcmd, location FROM swift_game WHERE id=$gameId";
                         $result = mysqli_fetch_array(mysqli_query($mysql, $startupScript));
                         $filesLocation = trim($result['location']);
+                        $startcmd = trim($result['startcmd']);
+                        $startcmd = str_replace("{port}", $port, $startcmd);
+                        $startcmd2 = str_replace("{user}", $account, $startcmd);
+                        //su srv11 -c "echo \"cd /home/srv11;export LD_LIBRARY_PATH=/usr/local/games/1fxlib;ln -s /usr/local/games/base ~/base; ~/sof2ded +set dedicated 2 +set vm_game 0 +set fs_game RPM +set net_port 20110 +set fs_homepath /home/srv11 +exec Config.cfg + sv_master5 104.42.16.193 + sv_hostname BRICKMEISTER\" | /bin/bash"
+
+                        $startcmd = "su $account -c \"echo \'cd /home/$account;$startcmd2 + sv_master5 104.42.16.193 + sv_hostname BRICKMEISTER\' | /bin/bash\"";
                         if ($isLinux == 1) {
                             $command1 = "useradd -m $account";
                             $command2 = "echo \"$account:$accpass\" | chpasswd";
-                            $command3 = "cp -R $filesLocation /home/$account/";
+                            $command3 = "cp -R $filesLocation/* /home/$account/";
                             $command4 = "chown -R $account /home/$account";
-                            //ssh2_exec($connection, $command1);
-                            //ssh2_exec($connection, $command2);cmd /c mklink /d "C:\Users\Janno\test\base" "C:\Games\SoF2 - 1.00\base"
+                            $command5 = $startcmd;
+                            
+                            ssh2_exec($connection, $command1);
+                            ssh2_exec($connection, $command2);//cmd /c mklink /d "C:\Users\Janno\test\base" "C:\Games\SoF2 - 1.00\base"
+                            ssh2_exec($connection, $command3);
+                            ssh2_exec($connection, $command4);
+                            ssh2_exec($connection, $command5);
                         } else {
                             $command1 = "cmd /c net user /add $account $accpass";
                             $command2 = "cmd /c xcopy /s $filesLocation C:/Users/$account/";
                             //ssh2_exec($connection, $command1);
                             //ssh2_exec($connection, $command2);
-                            ssh2_exec($connection, $command);
+                            //ssh2_exec($connection, $command);
                         }
                         
                         
                         
-                        $startcmd = trim($result['startcmd']);
-                        $startcmd = str_replace("{port}", $port, $startcmd);
-                        $startcmd = str_replace("{user}", $account, $startcmd);
+                        
                         $query = "INSERT INTO swift_servers(owner_id, host_id, account, password, script, name, port) VALUES('$owner', '$hostId', '$account', '$accpass', '$startcmd', '$name', '$port')";
                         $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$username', '$ip', 'Added a new server with name $name', '" . time() . "')";
                         $result = mysqli_query($mysql, $query);
