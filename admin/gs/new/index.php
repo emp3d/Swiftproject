@@ -128,37 +128,22 @@ $mysql = include '../../../config.php';
                         $filesLocation = trim($result['location']);
                         $startcmd = trim($result['startcmd']);
                         $startcmd = str_replace("{port}", $port, $startcmd);
-                        $startcmd2 = str_replace("{user}", $account, $startcmd);
-                        //su srv11 -c "echo \"cd /home/srv11;export LD_LIBRARY_PATH=/usr/local/games/1fxlib;ln -s /usr/local/games/base ~/base; ~/sof2ded +set dedicated 2 +set vm_game 0 +set fs_game RPM +set net_port 20110 +set fs_homepath /home/srv11 +exec Config.cfg + sv_master5 104.42.16.193 + sv_hostname BRICKMEISTER\" | /bin/bash"
-
-                        $startcmd = "$startcmd2 + sv_master5 104.42.16.193 + sv_hostname BRICKMEISTER";
+                        $startcmd = str_replace("{user}", $account, $startcmd);
                         if ($isLinux == 1) {
                             $command1 = "useradd -m $account";
                             $command2 = "echo \"$account:$accpass\" | chpasswd";
                             $command3 = "cp -R $filesLocation/* /home/$account/";
                             $command4 = "chown -R $account /home/$account";
-                            $command5 = $startcmd;
-                            
+                            /*$command5 = $startcmd;
+                            $con2 = ssh2_connect($hostIp, $sshport);//
+                            ssh2_auth_password($con2, $account, $accpass);
+                            $command6 = "screen -d -S $account -m sh -c";
+                            $stream = ssh2_exec($con2, "$command6 \"$command5\"");*/
                             ssh2_exec($connection, $command1);
                             ssh2_exec($connection, $command2);//cmd /c mklink /d "C:\Users\Janno\test\base" "C:\Games\SoF2 - 1.00\base"
                             ssh2_exec($connection, $command3);
                             ssh2_exec($connection, $command4);
-                            $con2 = ssh2_connect($hostIp, $sshport);//
-                            ssh2_auth_password($con2, $account, $accpass);
-                            //$output = ssh2_exec($connection, $command5);
-                            //$output = ssh2_shell($con2, "vt102", null, 400, 80, SSH2_TERM_UNIT_CHARS);
-                            $command6 = "screen -d -S $account -m sh -c";
-                            //fwrite($output, "$command6\n");
-                            //fwrite($output, "$command5\n");
-                            $cmdmen = $command6 . " \"$command5 >> ~/output.log 2>&1\"";
-                            //die("$command6 $command5");
-$stream = ssh2_exec($con2, "$command6 \"$command5\"");//this would execute all the //commands and return 
-                            //stream_set_blocking($stream, true);$o = fgets($stream);
                             
-                            /*stream_set_blocking($stream, true);
-                            while ($o = fgets($stream)) {
-                                echo $o;
-                            }*/
                             
                         } else {
                             $command1 = "cmd /c net user /add $account $accpass";
@@ -171,7 +156,7 @@ $stream = ssh2_exec($con2, "$command6 \"$command5\"");//this would execute all t
                         
                         
                         
-                        $query = "INSERT INTO swift_servers(owner_id, host_id, account, password, script, name, port) VALUES('$owner', '$hostId', '$account', '$accpass', '$startcmd', '$name', '$port')";
+                        $query = "INSERT INTO swift_servers(owner_id, host_id, account, password, script, name, port, active) VALUES('$owner', '$hostId', '$account', '$accpass', '$startcmd', '$name', '$port', '1')";
                         $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$username', '$ip', 'Added a new server with name $name', '" . time() . "')";
                         $result = mysqli_query($mysql, $query);
                         if (!$result) {

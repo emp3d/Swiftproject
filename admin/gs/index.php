@@ -2,6 +2,7 @@
 <?php
 session_start();
 $mysql = include '../../config.php';
+include 'options/server.php';
     if (!isset($_SESSION['username']) && !isset($_SESSION['lastactive']) && !isset($_SESSION['ip']) && !isset($_SESSION['admin'])) {
         die("<meta http-equiv=\"refresh\" content=\"0; url=../login\" />");
     }
@@ -70,27 +71,45 @@ $mysql = include '../../config.php';
   <div class="ui form segment">
   <div class="table-responsive">
             <table class="table table-hover table-bordered">
-                <thead><th>Name</th><th>IP</th><th>Port</th><th>Host server</th><th>Owner</th><th>Account</th><th>Password</th><th>Startup script</th></thead>
+                <thead><th>Status</th><th>Name</th><th>IP</th><th>Port</th><th>Host server</th><th>Owner</th><th>Account</th><th>Password</th><th>Manage</th></thead>
                 <?php
-                    $query = "SELECT swift_servers.port AS port, swift_hosts.ip AS ip, swift_servers.account AS acc, swift_servers.password AS pwd, swift_servers.script AS script, swift_servers.name AS name, swift_users.username AS user, swift_hosts.name AS hostname FROM swift_servers, swift_users, swift_hosts WHERE swift_servers.owner_id=swift_users.id AND swift_servers.host_id=swift_hosts.id";
-                    $result = mysqli_query($mysql, $query);
+                    //$query = "SELECT swift_servers.id AS srvId, swift_servers.port AS port, swift_hosts.ip AS ip, swift_hosts.sshport AS sshport, swift_servers.account AS acc, swift_servers.password AS pwd, swift_servers.name AS name, swift_users.username AS user, swift_hosts.name AS hostname FROM swift_servers, swift_users, swift_hosts WHERE swift_servers.owner_id=swift_users.id AND swift_servers.host_id=swift_hosts.id";
+                    //$query = "SELECT * FROM swift_servers";
+                $query = "SELECT swift_servers.id AS srvId, swift_servers.script AS startcmd, swift_servers.active AS isactive, swift_servers.port AS port, swift_hosts.ip AS ip, swift_hosts.sshport AS sshport, swift_servers.account AS acc, swift_servers.password AS pwd, swift_servers.name AS name, swift_users.username AS user, swift_hosts.name AS hostname FROM swift_servers, swift_users, swift_hosts WHERE swift_servers.owner_id=swift_users.id AND swift_servers.host_id=swift_hosts.id";
+                $result = mysqli_query($mysql, $query);
                     $data = false;
                     
                     
                     while ($row = mysqli_fetch_array($result)) { 
+                        $active = intval(trim($row['isactive'])) == 1 ? true:false;
                         $acc = $row['acc'];
                         $pwd = $row['pwd'];
-                        $script = $row['script'];
                         $name = $row['name'];
                         $owner = $row['user'];
                         $hostname = $row['hostname'];
                         $port = $row['port'];
                         $hostip = $row['ip'];
+                        $srvId = $row['srvId'];
+                        $sshport = $row['sshport'];
+
+                        $startcmd = trim($row['startcmd']);
                         $data = true;
-                        echo "<tr><td>$name</td><td>$hostip</td><td>$port</td><td>$hostname</td><td>$owner</td><td>$acc</td><td>$pwd</td><td>$script</td>";
+                        
+                        if ($active) {
+                            //Before showing everything to the user, parse ALL servers which are active (not stopped) and check that are they running.
+                            if (!checkStatus($hostip, $sshport, $acc, $pwd)) {
+                                startServer($hostip, $sshport, $acc, $pwd, $startcmd);
+                            } else if (!checkServer($hostip, $port)) {
+                                restartServer($hostip, $sshport, $acc, $pwd, $startcmd);
+                            }
+                            $active = "Running";
+                        } else {
+                            $active = "Stopped";
+                        }
+                        echo "<tr><td>$active</td><td>$name</td><td>$hostip</td><td>$port</td><td>$hostname</td><td>$owner</td><td>$acc</td><td>$pwd</td><td>TODO ID - $srvId</td></tr>";
                     }
                     if (!$data) {
-                        echo "<tr class=\"no-records-found\"><td colspan=\"8\">No records found. You can add a new host machine by clicking the Add new host button.</td></tr>";
+                        echo "<tr class=\"no-records-found\"><td colspan=\"9\">No records found. You can add a new host machine by clicking the Add new host button.</td></tr>";
                     }
                 
                 ?>
