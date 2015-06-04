@@ -9,4 +9,4 @@ $output = fgets($stream);
 $output = intval(trim($output));
 $cmd2 = "screen -S $output -X quit";
 ssh2_exec($con2, $cmd2);
-die("SUCCESS");
+die("SUCCESS");//

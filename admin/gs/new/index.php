@@ -143,7 +143,7 @@ $mysql = include '../../../config.php';
                             ssh2_exec($connection, $command2);//cmd /c mklink /d "C:\Users\Janno\test\base" "C:\Games\SoF2 - 1.00\base"
                             ssh2_exec($connection, $command3);
                             ssh2_exec($connection, $command4);
-                            $con2 = ssh2_connect($hostIp, $sshport);
+                            $con2 = ssh2_connect($hostIp, $sshport);//
                             ssh2_auth_password($con2, $account, $accpass);
                             //$output = ssh2_exec($connection, $command5);
                             //$output = ssh2_shell($con2, "vt102", null, 400, 80, SSH2_TERM_UNIT_CHARS);
