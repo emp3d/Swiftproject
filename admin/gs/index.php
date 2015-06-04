@@ -28,11 +28,11 @@ include 'options/server.php';
         $sshport = intval(trim($result['sshport']));
         $account = trim($result['account']);
         $accpass = trim($result['accpass']);
-        stopServer($hostIp, $sshport, $account, $accpass);
+        stopServer($hostIp, $sshport, $account, $accpass);sleep(3);
     } else if (isset($_REQUEST['start'])) {
         $id = intval(trim($_REQUEST['start']));
         $query = "UPDATE swift_servers SET active=1 WHERE id=$id";
-        mysqli_query($mysql, $query);
+        mysqli_query($mysql, $query);sleep(3);
     } else if (isset($_REQUEST['stop'])) {
         $id = intval(trim($_REQUEST['stop']));
         $query = "UPDATE swift_servers SET active=0 WHERE id=$id";
@@ -43,9 +43,9 @@ include 'options/server.php';
         $sshport = intval(trim($result['sshport']));
         $account = trim($result['account']);
         $accpass = trim($result['accpass']);
-        stopServer($hostIp, $sshport, $account, $accpass);
+        stopServer($hostIp, $sshport, $account, $accpass);sleep(3);
     }
-    sleep(3);
+    
 ?>
 <html>
     <head>

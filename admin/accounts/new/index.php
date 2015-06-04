@@ -82,14 +82,16 @@ $mysql = include '../../../config.php';
                         $query = "";
                         if ($isAdmin) {
                             $query = "INSERT INTO swift_admin(username, password) VALUES('$user', '$pass')";
+                            $isAdmin = "administrative";
                         } else {
                             $query = "INSERT INTO swift_users(username, password) VALUES('$user', '$pass')";
+                            $isAdmin = "normal";
                         }
                         $result = mysqli_query($mysql, $query);
                         if (!$result) {
                             $error = true;
                         }
-                        $query = "INSERT INTO swift_logs (username, ip, action, time) VALUES('$username', '$ip', 'Created account $user', '" . time() . "')";
+                        $query = "INSERT INTO swift_logs (username, ip, action, time) VALUES('$username', '$ip', 'Created account $user with $isAdmin privileges.', '" . time() . "')";
                         if (!$error) {
                             $result = mysqli_query($mysql, $query);
                             echo "<h2>Account $user with the password $password has been created!</h2>";
@@ -126,6 +128,9 @@ jQuery('ul.nav li.dropdown').hover(function() {
 }, function() {
  jQuery(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut();
 });
+$('.ui.checkbox')
+  .checkbox()
+;
 </script>
     </body>
 </html>

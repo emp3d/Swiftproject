@@ -73,11 +73,13 @@ $mysql = include '../../../config.php';
         <div class="container"> <br><br>
             <div class="ui form segment">
                 <?php
-                    if (isset($_REQUEST['ip']) && isset($_REQUEST['user']) && isset($_REQUEST['password']) && isset($_REQUEST['os'])) {
+                    if (isset($_REQUEST['ip']) && isset($_REQUEST['user']) && isset($_REQUEST['password']) && isset($_REQUEST['os']) && isset($_REQUEST['name'])) {
                         $srvip = $_REQUEST['ip'];
                         $user = $_REQUEST['user'];
                         $pass = $_REQUEST['password'];
                         $sshport = $_REQUEST['ssh'];
+                        $name = $_REQUEST['name'];
+                        $name = mysqli_real_escape_string($mysql, trim($name));
                         $sshport = intval($sshport);
                         if (!is_int($sshport) || $sshport == 0 || $sshport == 1) {
                             $sshport = 22;
@@ -91,7 +93,7 @@ $mysql = include '../../../config.php';
                         $stream_out = ssh2_fetch_stream($output, SSH2_STREAM_STDIO);
                         $whoami = stream_get_contents($output);
                         if (!strcmp(trim($whoami), $user)) { 
-                            $query = "INSERT INTO swift_hosts(ip, user, pass, islinux, sshport) VALUES('$srvip', '$user', '$pass', '$os', '$sshport')";
+                            $query = "INSERT INTO swift_hosts(ip, user, pass, islinux, sshport, name) VALUES('$srvip', '$user', '$pass', '$os', '$sshport', '$name')";
                             $result = mysqli_query($mysql, $query);
                             if (!$result) {
                                 die(mysqli_error($mysql));
@@ -109,6 +111,10 @@ $mysql = include '../../../config.php';
                 ?>
                 
                 <form method="get" id="srv">
+                    <div class="field">
+                        <label for="name">Name</label>
+                        <input id="name" placeholder="Type in a friendly name for the server" type="text" name="name" required />
+                    </div>
                     <div class="field">
                         <label for="ip">IP</label>
                         <input id="ip" placeholder="Type in the host server IP" type="text" name="ip" required />

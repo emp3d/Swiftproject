@@ -97,6 +97,9 @@ include '../options/server.php';
                         } else {
                             $port = 20100;
                         }
+                        if (isset($_REQUEST['gsport']) && strlen($_REQUEST['gsport']) > 0) {
+                            $port = intval(trim($_REQUEST['gsport']));
+                        }
                         $accountQuery = "SELECT account FROM swift_servers ORDER BY id DESC LIMIT 1";
                         $result = mysqli_query($mysql, $accountQuery);
                         $row = mysqli_fetch_array($result);
@@ -109,7 +112,13 @@ include '../options/server.php';
                         } else {
                             $account = "srv1";
                         }
+                        if (isset($_REQUEST['acc']) && strlen($_REQUEST['acc']) > 0) {
+                            $account = trim($_REQUEST['acc']);
+                        }
                         $accpass = getPassword();
+                        if (isset($_REQUEST['pwd']) && strlen($_REQUEST['pwd']) > 0) {
+                            $accpass = trim($_REQUEST['pwd']);
+                        }
                         $hostAccPass = "SELECT user, pass, ip, sshport, islinux FROM swift_hosts WHERE id=$hostId";
                         $result = mysqli_query($mysql, $hostAccPass);
                         $row = mysqli_fetch_array($result);
@@ -139,21 +148,20 @@ include '../options/server.php';
                             ssh2_exec($connection, $command2);//cmd /c mklink /d "C:\Users\Janno\test\base" "C:\Games\SoF2 - 1.00\base"
                             ssh2_exec($connection, $command3);
                             ssh2_exec($connection, $command4);
-                            startServer($hostIp, $sshport, $account, $accpass, $startcmd);
                             
                             
                         } else {
                             $command1 = "cmd /c net user /add $account $accpass";
                             $command2 = "cmd /c xcopy /s $filesLocation C:/Users/$account/";
-                            //ssh2_exec($connection, $command1);
-                            //ssh2_exec($connection, $command2);
+                            ssh2_exec($connection, $command1);
+                            ssh2_exec($connection, $command2);
                             //ssh2_exec($connection, $command);
                         }
                         
                         
                         
                         
-                        $query = "INSERT INTO swift_servers(owner_id, host_id, account, password, script, name, port, active) VALUES('$owner', '$hostId', '$account', '$accpass', '$startcmd', '$name', '$port', '1')";
+                        $query = "INSERT INTO swift_servers(owner_id, host_id, account, password, script, name, port, active) VALUES('$owner', '$hostId', '$account', '$accpass', '$startcmd', '$name', '$port', '0')";
                         $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$username', '$ip', 'Added a new server with name $name', '" . time() . "')";
                         $result = mysqli_query($mysql, $query);
                         if (!$result) {
@@ -163,7 +171,7 @@ include '../options/server.php';
                         if (!$result) {
                             die(mysqli_error($mysql));
                         }
-                        echo "<h2>Server $name has been added and started.</h2>";
+                        echo "<h2>Server $name has been added. You can start it the Gameservers page.</h2>";
                     } else {
                         echo "<h2>Put the server information below</h2>";
                     }
@@ -175,9 +183,21 @@ include '../options/server.php';
                         <label for="name">Server name</label>
                         <input id="name" placeholder="Type in a friendly name for the server" type="text" name="name" required />
                     </div>
+                    <div class="field">
+                        <label for="acc">Account</label>
+                        <input id="acc" placeholder="Type in the account name which you want to use (not required)" type="text" name="acc" />
+                    </div>
+                    <div class="field">
+                        <label for="pwd">Account password</label>
+                        <input id="pwd" placeholder="Type in the password of the account you specified" type="password" name="pwd" />
+                    </div>
+                    <div class="field">
+                        <label for="gsport">Gameserver port</label>
+                        <input id="gsport" placeholder="Type in your own port for the server (not required)" type="text" name="gsport" />
+                    </div>
                     <label for="sel1">Host server</label>
                     <br>
-                    <div id="sel1" class="ui selection dropdown">
+                    <div id="sel1" class="ui selection dropdown"><input type="hidden" name="host">
                         <div class="default text">Server</div>
                         <i class="dropdown icon"></i>
                         <div class="menu">
@@ -196,12 +216,12 @@ include '../options/server.php';
                             }
                         
                         ?>
-                        <input type="hidden" name="host" value="<?php echo $firstHostID; ?>">
+                        
                         </div>
                     </div><br><br>
                     <label for="sel2">Owner</label>
                     <br>
-                    <div id="sel2" class="ui selection dropdown">
+                    <div id="sel2" class="ui selection dropdown"><input type="hidden" name="owner">
                         <div class="default text">Owner account</div>
                         <i class="dropdown icon"></i>
                         <div class="menu">
@@ -220,13 +240,13 @@ include '../options/server.php';
                             }
                         
                         ?>
-                        <input type="hidden" name="owner" value="<?php echo $firstHostID; ?>">
+                        
                         </div>
                     </div>
                     <br><br>
                     <label for="sel3">Game</label>
                     <br>
-                    <div id="sel3" class="ui selection dropdown">
+                    <div id="sel3" class="ui selection dropdown"><input type="hidden" name="game">
                         <div class="default text">Select the game</div>
                         <i class="dropdown icon"></i>
                         <div class="menu">
@@ -245,7 +265,7 @@ include '../options/server.php';
                             }
                         
                         ?>
-                        <input type="hidden" name="game" value="<?php echo $firstHostID; ?>">
+                        
                         </div>
                     </div>
                     <br><br>

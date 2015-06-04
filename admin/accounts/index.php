@@ -77,7 +77,8 @@ $mysql = include '../../config.php';
                 $query = "SELECT id, username FROM swift_users ORDER BY id ASC";
                 $result = mysqli_query($mysql, $query);
                 while ($row = mysqli_fetch_array($result)) {
-                    echo "<tr><td>" . $row['username'] . "</td><td>TODO ID - " . $row['id'];
+                    $id = trim($row['id']);
+                    echo "<tr><td>" . $row['username'] . "</td><td><center></center></td>";
                 }
                 
                 ?>
