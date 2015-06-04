@@ -66,38 +66,9 @@ $mysql = include '../config.php';
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
       </nav>
-        <div class="container"> <br><br>
-  <div class="ui form segment"><h3>Servers</h3>
-            <div class="table-responsive">
-            <table class="table table-hover table-bordered">
-                <thead><th>Name</th><th>IP</th><th>Port</th><th>Host server</th><th>Owner</th><th>Account</th><th>Password</th><th>Startup script</th></thead>
-                <?php
-                    $query = "SELECT swift_servers.port AS port, swift_hosts.ip AS ip, swift_servers.account AS acc, swift_servers.password AS pwd, swift_servers.script AS script, swift_servers.name AS name, swift_users.username AS user, swift_hosts.name AS hostname FROM swift_servers, swift_users, swift_hosts WHERE swift_servers.owner_id=swift_users.id AND swift_servers.host_id=swift_hosts.id";
-                    $result = mysqli_query($mysql, $query);
-                    $data = false;
-                    
-                    
-                    while ($row = mysqli_fetch_array($result)) { 
-                        $acc = $row['acc'];
-                        $pwd = $row['pwd'];
-                        $script = $row['script'];
-                        $name = $row['name'];
-                        $owner = $row['user'];
-                        $hostname = $row['hostname'];
-                        $port = $row['port'];
-                        $hostip = $row['ip'];
-                        $data = true;
-                        echo "<tr><td>$name</td><td>$hostip</td><td>$port</td><td>$hostname</td><td>$owner</td><td>$acc</td><td>$pwd</td><td>$script</td>";
-                    }
-                    if (!$data) {
-                        echo "<tr class=\"no-records-found\"><td colspan=\"8\">No records found. You can add a new host machine by clicking the Add new host button.</td></tr>";
-                    }
-                
-                ?>
-            </table>
+        <div class="container"> <br><br><h3>Hello, <?php echo $_SESSION['username']; ?>. Please choose a task on the navigation bar at the top of the homepage.</h3><br>
+  <div class="ui form segment">
       
-  </div>
-            
             
       <h3>Latest actions</h3><br>
                 <div class="table-responsive">

@@ -20,24 +20,15 @@ if (!($mysql instanceof mysqli)) {
         
         $query = "SELECT * FROM swift_admin WHERE username='$user'";
         $result = mysqli_fetch_array(mysqli_query($mysql, $query));
-        print_r($result);
         if (isset($result['password'])) {
-            echo "isset";
             $hash = $result['password'];
-            echo "<br>";
-            echo "strlen1 - " . strlen($hash);
-            echo password_verify($pass, $hash)? "yes":"no";
-            echo mysqli_character_set_name($mysql);
             if (password_verify($pass, $hash)) {
-                echo "tere";
                 $_SESSION['username'] = $user;
                 $_SESSION['lastactive'] = time();
                 $_SESSION['ip'] = $ip;
                 $_SESSION['admin'] = password_hash($user, PASSWORD_DEFAULT);
-                print_r($_SESSION);
                 die("<meta http-equiv=\"refresh\" content=\"0; url=../\" />");
             } else {
-                echo "puts";
                 $error = true;
             }
         } else {
@@ -75,7 +66,7 @@ if (!($mysql instanceof mysqli)) {
         <div class="container"> <br><br>
   
   
-  <div class="ui form segment">   <form method='get'>
+  <div class="ui form segment">   <form method='post'>
           <?php
           if (isset($_REQUEST['r'])) {
               echo '<h2>Your session has expired, please log in again.</h2>';
@@ -93,10 +84,10 @@ if (!($mysql instanceof mysqli)) {
       <div class="field">
         <label for="password">Password</label>
         <input id="password" placeholder="Your password" type="password" name="password" required >
-      </div>
+      </div><button type="submit" class="ui blue button">Login</button></form>
     </div>
 
-    <button class="ui blue button submit">Login</button></form>
+    
   </div>
   
 <script>

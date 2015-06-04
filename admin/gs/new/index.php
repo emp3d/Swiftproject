@@ -3,6 +3,7 @@
 session_start();
 $error = false;
 $mysql = include '../../../config.php';
+include '../options/server.php';
     if (!isset($_SESSION['username']) && !isset($_SESSION['lastactive']) && !isset($_SESSION['ip']) && !isset($_SESSION['admin'])) {
         die("<meta http-equiv=\"refresh\" content=\"0; url=../../login\" />");
     }
@@ -134,15 +135,11 @@ $mysql = include '../../../config.php';
                             $command2 = "echo \"$account:$accpass\" | chpasswd";
                             $command3 = "cp -R $filesLocation/* /home/$account/";
                             $command4 = "chown -R $account /home/$account";
-                            /*$command5 = $startcmd;
-                            $con2 = ssh2_connect($hostIp, $sshport);//
-                            ssh2_auth_password($con2, $account, $accpass);
-                            $command6 = "screen -d -S $account -m sh -c";
-                            $stream = ssh2_exec($con2, "$command6 \"$command5\"");*/
                             ssh2_exec($connection, $command1);
                             ssh2_exec($connection, $command2);//cmd /c mklink /d "C:\Users\Janno\test\base" "C:\Games\SoF2 - 1.00\base"
                             ssh2_exec($connection, $command3);
                             ssh2_exec($connection, $command4);
+                            startServer($hostIp, $sshport, $account, $accpass, $startcmd);
                             
                             
                         } else {
@@ -166,7 +163,7 @@ $mysql = include '../../../config.php';
                         if (!$result) {
                             die(mysqli_error($mysql));
                         }
-                        echo "<h2>Server $name successfully added!</h2>";
+                        echo "<h2>Server $name has been added and started.</h2>";
                     } else {
                         echo "<h2>Put the server information below</h2>";
                     }

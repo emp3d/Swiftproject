@@ -2,6 +2,7 @@
 <?php
 session_start();
 $mysql = include '../../config.php';
+
 include 'options/server.php';
     if (!isset($_SESSION['username']) && !isset($_SESSION['lastactive']) && !isset($_SESSION['ip']) && !isset($_SESSION['admin'])) {
         die("<meta http-equiv=\"refresh\" content=\"0; url=../login\" />");
@@ -18,6 +19,33 @@ include 'options/server.php';
     } else {
         $_SESSION['lastactive'] = time();
     }
+    
+    if (isset($_REQUEST['reboot'])) {
+        $id = intval(trim($_REQUEST['reboot']));
+        $query = "SELECT swift_servers.account AS account, swift_servers.password AS accpass, swift_hosts.ip AS hostIp, swift_hosts.sshport AS sshport FROM swift_servers, swift_hosts WHERE swift_servers.host_id=swift_hosts.id AND swift_servers.id='$id'";
+        $result = mysqli_fetch_array(mysqli_query($mysql, $query));
+        $hostIp = trim($result['hostIp']);
+        $sshport = intval(trim($result['sshport']));
+        $account = trim($result['account']);
+        $accpass = trim($result['accpass']);
+        stopServer($hostIp, $sshport, $account, $accpass);
+    } else if (isset($_REQUEST['start'])) {
+        $id = intval(trim($_REQUEST['start']));
+        $query = "UPDATE swift_servers SET active=1 WHERE id=$id";
+        mysqli_query($mysql, $query);
+    } else if (isset($_REQUEST['stop'])) {
+        $id = intval(trim($_REQUEST['stop']));
+        $query = "UPDATE swift_servers SET active=0 WHERE id=$id";
+        mysqli_query($mysql, $query);
+        $query = "SELECT swift_servers.account AS account, swift_servers.password AS accpass, swift_hosts.ip AS hostIp, swift_hosts.sshport AS sshport FROM swift_servers, swift_hosts WHERE swift_servers.host_id=swift_hosts.id AND swift_servers.id='$id'";
+        $result = mysqli_fetch_array(mysqli_query($mysql, $query));
+        $hostIp = trim($result['hostIp']);
+        $sshport = intval(trim($result['sshport']));
+        $account = trim($result['account']);
+        $accpass = trim($result['accpass']);
+        stopServer($hostIp, $sshport, $account, $accpass);
+    }
+    sleep(3);
 ?>
 <html>
     <head>
@@ -94,7 +122,7 @@ include 'options/server.php';
 
                         $startcmd = trim($row['startcmd']);
                         $data = true;
-                        
+                        $task = "";
                         if ($active) {
                             //Before showing everything to the user, parse ALL servers which are active (not stopped) and check that are they running.
                             if (!checkStatus($hostip, $sshport, $acc, $pwd)) {
@@ -103,10 +131,12 @@ include 'options/server.php';
                                 restartServer($hostip, $sshport, $acc, $pwd, $startcmd);
                             }
                             $active = "Running";
+                            $task = "<center><i class=\"stop icon\" title=\"Stop the server\" onclick=\"location.href='?stop=$srvId';\" style=\"cursor:pointer;\"></i> <i class=\"refresh icon\" title=\"Restart the server\" style=\"cursor:pointer;\" onclick=\"location.href='?reboot=$srvId'\"></i></center>";
                         } else {
                             $active = "Stopped";
+                             $task = "<center><i class=\"play icon\" title=\"Start the server\" onclick=\"location.href='?start=$srvId'\" style=\"cursor:pointer;\"></i></center>";
                         }
-                        echo "<tr><td>$active</td><td>$name</td><td>$hostip</td><td>$port</td><td>$hostname</td><td>$owner</td><td>$acc</td><td>$pwd</td><td>TODO ID - $srvId</td></tr>";
+                        echo "<tr><td>$active</td><td>$name</td><td>$hostip</td><td>$port</td><td>$hostname</td><td>$owner</td><td>$acc</td><td>$pwd</td><td>$task</td></tr>";
                     }
                     if (!$data) {
                         echo "<tr class=\"no-records-found\"><td colspan=\"9\">No records found. You can add a new host machine by clicking the Add new host button.</td></tr>";
