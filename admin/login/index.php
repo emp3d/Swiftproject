@@ -39,11 +39,9 @@ if (!($mysql instanceof mysqli)) {
     if ($error) {
         $user = $_REQUEST['user'];
         $user = htmlentities($user);
-        echo $user;
         $user = mysqli_real_escape_string($mysql, $user);
         $query = "INSERT INTO swift_loginlog (user, ip, date) VALUES ('$user', '$ip', '" . time() . "')";
         mysqli_query($mysql, $query);
-        echo $user . "<br>" . $query;
     }
     
 

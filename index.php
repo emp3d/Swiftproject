@@ -1,9 +1,24 @@
 <!DOCTYPE html>
 <?php
 session_start();
-    if (!isset($_SESSION['username']) || !isset($_SESSION['timeout'])) {
+    if (!isset($_SESSION['user']) || !isset($_SESSION['lastactive']) || !isset($_SESSION['ip']) || !isset($_SESSION['acc'])) {
         die("<meta http-equiv=\"refresh\" content=\"0; url=login\" />");
     }
+    
+    $admin = $_SESSION['acc'];
+    if (!(password_verify($_SESSION['user'], $admin))) {
+        die("<meta http-equiv=\"refresh\" content=\"0; url=login\" />");
+    }
+    $lastactive = $_SESSION['lastactive'];
+    $time = time();
+    if ($time >= $lastactive + 600) { //10 minutoo
+        session_destroy();
+        die("<meta http-equiv=\"refresh\" content=\"0; url=login/?r=e\" />");
+    } else {
+        $_SESSION['lastactive'] = time();
+    }
+    $user = $_SESSION['user'];
+    $ip = $_SESSION['ip'];
 ?>
 <html>
     <head>
@@ -20,75 +35,31 @@ session_start();
         <link href="semantic/components/dropdown.css" rel="stylesheet" />
     </head>
     <body>
+        <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Welcome, <?php echo $_SESSION['user']; ?></a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="gs/">Gameservers</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="preferences"><i class="setting icon"></i>Preferences</a></li>
+              <li><a href="logout">Logout</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
         <div class="container"> 
-  <h1>Register Now</h1>
-  
-  <div class="ui form segment">   <form method='get'>
-    <div class="two fields">
-      <div class="field">
-        <label for="GivenName">Given Name</label>
-        <input id="GivenName" placeholder="Given Name" type="text" name='user' required />
-      </div>
-
-      <div class="field">
-        <label for="Surname">Surname</label>
-        <input id="Surname" placeholder="Surname" type="text" name="surname" required >
-      </div>
-    </div>
-
-    <div class="field">
-      <label for="Email">Email</label>
-      <input id="Email" placeholder="Email" type="text">
-    </div>
-
-    <div class="field">
-      <label for="Username">Username</label>
-      <input id="Username" placeholder="Username" type="text">
-    </div>
-
-    <div class="field">
-      <label for="Password">Password</label>
-      <input id="Password" type="password">
-    </div>
-
-    <div class="field">
-      <label for="PasswordConfirm">Password Confirm</label>
-      <input id="PasswordConfirm" type="password">
-    </div>
-
-    <button class="ui blue button submit">Submit</button></form>
-  </div>
-  <div class="ui vertical menu">
-    <a class="item">
-      Home
-    </a>
-    <div class="ui left pointing dropdown link item">
-      <i class="dropdown icon"></i>
-      Messages
-      <div class="menu">
-        <div class="item">Inbox</div>
-        <div class="item">Starred</div>
-        <div class="item">Sent Mail</div>
-        <div class="item">Drafts (143)</div>
-        <div class="divider"></div>
-        <div class="item">Spam (1009)</div>
-        <div class="item">Trash</div>
-      </div>
-    </div>
-    <a class="item">
-      Browse
-    </a>
-    <a class="item">
-      Help
-    </a>
-  </div>
-</div>
-<script>
-$(".dropdown")
-  .dropdown({
-    transition: 'horizontal drop'
-  });
-;
-</script>
+            
+        </div>
     </body>
 </html>

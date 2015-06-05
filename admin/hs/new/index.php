@@ -132,7 +132,10 @@ $mysql = include '../../../config.php';
                         <label for="password">Password</label>
                         <input id="password" placeholder="Type in the password of the host server" type="password" name="password" required >
                     </div>
-                    
+                    <div class="ui toggle checkbox">
+                        <input type="checkbox" name="setCron">
+                        <label>Set up cron job</label>
+                    </div><br>
                     <label for="sel">Operation system</label>
                     <br>
                     <div id="sel" class="ui selection dropdown">
@@ -157,6 +160,9 @@ jQuery('ul.nav li.dropdown').hover(function() {
  jQuery(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut();
 });
 $('.ui.dropdown').dropdown();
+$('.ui.checkbox')
+  .checkbox()
+;
 </script>
     </body>
 </html>

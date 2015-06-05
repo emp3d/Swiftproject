@@ -1,5 +1,13 @@
 <?php
 
+function deleteServer($hostIp, $sshport, $admacc, $admpass, $account, $password) {
+    stopServer($hostIp, $sshport, $account, $password);
+    $con = ssh2_connect($hostIp, $sshport);
+    ssh2_auth_password($con, $admacc, $admpass);
+    $command = "userdel -r $account";
+    ssh2_exec($con, $command);
+}
+
 function startServer($hostIp, $sshport, $account, $accpass, $startcmd) {
     $con = ssh2_connect($hostIp, $sshport);
     ssh2_auth_password($con, $account, $accpass);
@@ -44,4 +52,19 @@ function checkServer ($hostIp, $gameport) {
         return true;
     }
     return false;
+}
+
+function addCronJob($hostIp, $sshport, $admacc, $admpass) {
+    $con = ssh2_connect($hostIp, $sshport);
+    ssh2_auth_password($con, $admacc, $admpass);
+    $cmd = "crontab -l >> mycron";
+    $loc = $_SERVER['DOCUMENT_ROOT'];
+    $cmd2 = "echo \"\n* * * * * $loc/swiftproject/admin/gs/options/cron.php\" >> mycron";
+    $cmd3 = "crontab mycron";
+    $stream = ssh2_exec($con, $cmd);
+    stream_set_blocking($stream, true);
+    $stream = ssh2_exec($con, $cmd2);
+    stream_set_blocking($stream, true);
+    $stream = ssh2_exec($con, $cmd3);
+    stream_set_blocking($stream, true);
 }

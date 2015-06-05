@@ -1,4 +1,50 @@
 <!DOCTYPE html>
+<?php
+    session_start();
+    $error = false;
+$mysql = include '../config.php';
+if (!($mysql instanceof mysqli)) {
+            die($mysql);
+        }
+    include '../ip.php';
+    $ip = getRealIP();
+    if (isset($_REQUEST['user']) && isset($_REQUEST['pass'])) {
+
+        authenticate($_REQUEST['user'], $_REQUEST['pass']);
+    }
+    
+    function authenticate($user, $pass) {
+        global $error, $ip, $mysql;
+        $user = htmlentities($user);
+        
+        
+        $query = "SELECT * FROM swift_users WHERE username='$user'";
+        $result = mysqli_fetch_array(mysqli_query($mysql, $query));
+        if (isset($result['password'])) {
+            $hash = $result['password'];
+            if (password_verify($pass, $hash)) {
+                $_SESSION['user'] = $user;
+                $_SESSION['lastactive'] = time();
+                $_SESSION['ip'] = $ip;
+                $_SESSION['acc'] = password_hash($user, PASSWORD_DEFAULT);
+                die("<meta http-equiv=\"refresh\" content=\"0; url=../\" />");
+            } else {
+                $error = true;
+            }
+        } else {
+            $error = true;
+        }
+    }
+    
+    if ($error) {
+        $user = $_REQUEST['user'];
+        $user = htmlentities($user);
+        $user = mysqli_real_escape_string($mysql, $user);
+        $query = "INSERT INTO swift_loginlog (user, ip, date) VALUES ('$user', '$ip', '" . time() . "')";
+        mysqli_query($mysql, $query);
+    }
+
+?>
 <html>
     <head>
         <meta charset="UTF-8">
@@ -19,7 +65,7 @@
   
   <div class="ui form segment">
                 <h2>Login into system</h2>
-                <form method="get">
+                <form method="post">
                     <div class="field">
                         <label for="user">Account name</label>
                         <input id="user" placeholder="The account name which was given to you by the administrator" type="text" name="user" required />
@@ -33,12 +79,5 @@
             </div>
 
 </div>
-<script>
-$(".dropdown")
-  .dropdown({
-    transition: 'horizontal drop'
-  });
-;
-</script>
     </body>
 </html>

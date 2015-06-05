@@ -78,7 +78,7 @@ $mysql = include '../../config.php';
                 $result = mysqli_query($mysql, $query);
                 while ($row = mysqli_fetch_array($result)) {
                     $id = trim($row['id']);
-                    echo "<tr><td>" . $row['username'] . "</td><td><center></center></td>";
+                    echo "<tr><td>" . $row['username'] . "</td><td><center><i class=\"settings icon\" title=\"Modify user\" style=\"cursor:pointer;\" onclick=\"location.href='modify/?id=$id';\"></i> <i class=\"remove icon\" title=\"Delete user\" style=\"cursor:pointer; color:red;\" onclick=\"myscript();\"></i> </center></td>";
                 }
                 
                 ?>
@@ -91,7 +91,8 @@ $mysql = include '../../config.php';
                 $query = "SELECT id, username FROM swift_admin ORDER BY id ASC";
                 $result = mysqli_query($mysql, $query);
                 while ($row = mysqli_fetch_array($result)) {
-                    echo "<tr><td>" . $row['username'] . "</td><td>TODO ID - " . $row['id'];
+                    $id = trim($row['id']);
+                    echo "<tr><td>" . $row['username'] . "</td><td><center><i class=\"settings icon\" title=\"Modify user\" style=\"cursor:pointer;\" onclick=\"location.href='modify/?id=$id';\"></i> <i class=\"remove icon\" title=\"Delete user\" style=\"cursor:pointer; color:red;\" onclick=\"myscript();\"></i></center></td></tr>";
                 }
                 
                 ?>

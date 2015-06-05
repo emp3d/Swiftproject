@@ -44,3 +44,4 @@ Temporary Items
 config.php
 nbproject/private/private.xml
 *.xml
+admin/gs/options/mycron
