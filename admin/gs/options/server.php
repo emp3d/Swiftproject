@@ -30,7 +30,7 @@ function restartServer($hostIp, $sshport, $account, $accpass, $startcmd) {
 function checkStatus($hostIp, $sshport, $account, $accpass) {
     $con = ssh2_connect($hostIp, $sshport);
     ssh2_auth_password($con, $account, $accpass);
-    $cmd1 = "screen -ls | grep -o '[0-9]\{3,4,5\}'";
+    $cmd1 = "screen -ls | grep -o '[0-9]\{3,5\}'";
     $stream = ssh2_exec($con, $cmd1);
     stream_set_blocking($stream, true);
     $output = fgets($stream);
