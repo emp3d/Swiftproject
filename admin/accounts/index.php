@@ -17,6 +17,39 @@ $mysql = include '../../config.php';
     } else {
         $_SESSION['lastactive'] = time();
     }
+    $error2 = false;
+    if (isset($_REQUEST['disable']) && isset($_REQUEST['id'])) {
+        $query = "";
+        $isadmin = intval(trim($_REQUEST['disable'])) == 1? true:false;
+        $accid = intval(trim($_REQUEST['id']));
+        if ($isadmin) {
+            
+            //check that should we do it (am I the last admin?)
+            $checkActive = "SELECT Count(*) AS activeAdmins FROM swift_admin WHERE active=1";
+            $result = mysqli_fetch_array(mysqli_query($mysql, $checkActive));
+            $activeAdmins = intval(trim($result['activeAdmins']));
+            if ($activeAdmins <= 1) {
+                $error2 = true;
+            } else {
+                $query = "UPDATE swift_admin SET active=0 WHERE id=$accid";
+            }
+        } else {
+            $query = "UPDATE swift_users SET active=0 WHERE id=$accid";
+        }
+        if (!$error2) {
+            mysqli_query($mysql, $query);
+        }
+    } else if (isset($_REQUEST['enable']) && isset($_REQUEST['id'])) {
+        $query = "";
+        $isadmin = intval(trim($_REQUEST['enable'])) == 1? true:false;
+        $accid = intval(trim($_REQUEST['id']));
+        if ($isadmin) {
+            $query = "UPDATE swift_admin SET active=1 WHERE id=$accid";
+        } else {
+            $query = "UPDATE swift_users SET active=1 WHERE id=$accid";
+        }
+        mysqli_query($mysql, $query);
+    }
 ?>
 <html>
     <head>
@@ -68,17 +101,30 @@ $mysql = include '../../config.php';
       </nav>
         <div class="container"> <br><br>
         <div class="ui form segment">
+            <?php
+            if ($error2) {
+                echo "<h2>You cannot disable the final administrator account as it would leave the panel without any administrative rights!</h2>";
+            }
+            
+            ?>
             <h3>Normal accounts</h3>
             <div class="table-responsive">
             <table class="table table-hover table-bordered">
                 
                 <thead><th>Username</th><th>Options</th></thead>
                 <?php
-                $query = "SELECT id, username FROM swift_users ORDER BY id ASC";
+                $query = "SELECT id, username, active FROM swift_users ORDER BY id ASC";
                 $result = mysqli_query($mysql, $query);
                 while ($row = mysqli_fetch_array($result)) {
                     $id = trim($row['id']);
-                    echo "<tr><td>" . $row['username'] . "</td><td><center><i class=\"settings icon\" title=\"Modify user\" style=\"cursor:pointer;\" onclick=\"location.href='modify/?id=$id';\"></i> <i class=\"remove icon\" title=\"Delete user\" style=\"cursor:pointer; color:red;\" onclick=\"myscript();\"></i> </center></td>";
+                    $isactive = intval(trim($row['active'])) == 1? true:false;
+                    $delorenable = "";
+                    if ($isactive) {
+                        $delorenable = "<i class=\"remove icon\" title=\"Disable user\" style=\"cursor:pointer; color:red;\" onclick=\"disableAcc(0, $id, '" . $row['username'] . "');\"></i>";
+                    } else {
+                        $delorenable = "<i class=\"checkmark icon\" title=\"Enable user\" style=\"cursor:pointer; color:green;\" onclick=\"enableAcc(0, $id, '" . $row['username'] . "');\"></i>";
+                    }
+                    echo "<tr><td>" . $row['username'] . "</td><td><center><i class=\"settings icon\" title=\"Modify user\" style=\"cursor:pointer;\" onclick=\"location.href='modify/?id=$id&admin=0';\"></i> $delorenable </center></td>";
                 }
                 
                 ?>
@@ -88,11 +134,18 @@ $mysql = include '../../config.php';
                 
                 <thead><th>Username</th><th>Options</th></thead>
                 <?php
-                $query = "SELECT id, username FROM swift_admin ORDER BY id ASC";
+                $query = "SELECT id, username, active FROM swift_admin ORDER BY id ASC";
                 $result = mysqli_query($mysql, $query);
                 while ($row = mysqli_fetch_array($result)) {
                     $id = trim($row['id']);
-                    echo "<tr><td>" . $row['username'] . "</td><td><center><i class=\"settings icon\" title=\"Modify user\" style=\"cursor:pointer;\" onclick=\"location.href='modify/?id=$id';\"></i> <i class=\"remove icon\" title=\"Delete user\" style=\"cursor:pointer; color:red;\" onclick=\"myscript();\"></i></center></td></tr>";
+                    $isactive = intval(trim($row['active'])) == 1? true:false;
+                    $delorenable = "";
+                    if ($isactive) {
+                        $delorenable = "<i class=\"remove icon\" title=\"Disable user\" style=\"cursor:pointer; color:red;\" onclick=\"disableAcc(1, $id, '" . $row['username'] . "');\"></i>";
+                    } else {
+                        $delorenable = "<i class=\"checkmark icon\" title=\"Enable user\" style=\"cursor:pointer; color:green;\" onclick=\"enableAcc(1, $id, '" . $row['username'] . "');\"></i>";
+                    }
+                    echo "<tr><td>" . $row['username'] . "</td><td><center><i class=\"settings icon\" title=\"Modify user\" style=\"cursor:pointer;\" onclick=\"location.href='modify/?id=$id&admin=1';\"></i> $delorenable </center></td></tr>";
                 }
                 
                 ?>
@@ -125,6 +178,20 @@ jQuery('ul.nav li.dropdown').hover(function() {
 }, function() {
  jQuery(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut();
 });
+
+function disableAcc(isAdmin, id, acc) {
+    var x = confirm("Are you sure you want to disable account " + acc);
+    if (x) {
+        location.href = "?disable=" + isAdmin + "&id=" + id;
+    }
+}
+
+function enableAcc(isAdmin, id, acc) {
+    var x = confirm("Are you sure you want to enable account " + acc);
+    if (x) {
+        location.href = "?enable=" + isAdmin + "&id=" + id;
+    }
+}
 </script>
     </body>
 </html>

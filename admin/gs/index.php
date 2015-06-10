@@ -97,6 +97,12 @@ include 'options/server.php';
       </nav>
         <div class="container"> <br><br>
   <div class="ui form segment">
+      <?php
+      if (isset($_REQUEST['deleted'])) {
+          $id = $_REQUEST['deleted'];
+          echo "<h2>Server with id $id has been deleted</h2>";
+      }
+      ?>
   <div class="table-responsive">
             <table class="table table-hover table-bordered">
                 <thead><th>Status</th><th>Name</th><th>IP</th><th>Port</th><th>Host server</th><th>Owner</th><th>Account</th><th>Password</th><th>Manage</th></thead>
@@ -121,6 +127,7 @@ include 'options/server.php';
                         $sshport = $row['sshport'];
 
                         $startcmd = trim($row['startcmd']);
+                        $startcmd = str_replace("{port}", $port, $startcmd);
                         $data = true;
                         $task = "";
                         if ($active) {

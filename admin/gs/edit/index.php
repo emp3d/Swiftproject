@@ -86,14 +86,45 @@ include '../options/server.php';
       </nav>
         <div class="container"> <br><br>
             <div class="ui form segment">
+                
+                <?php
+                $error = false;
+                $errstr = "";
+                    if (isset($_REQUEST['owner']) && isset($_REQUEST['srvname']) && isset($_REQUEST['gport']) && isset($_REQUEST['script']) && isset($_REQUEST['hostid'])) {
+                        $owner = intval(trim($_REQUEST['owner']));
+                        $srvname = trim($_REQUEST['srvname']);
+                        $gport = intval(trim($_REQUEST['gport']));
+                        $script = trim($_REQUEST['script']);
+                        $hostid = intval(trim($_REQUEST['hostid']));
+                        $query = "UPDATE swift_servers SET name='$srvname', port='$gport', owner_id='$owner', script='$script' WHERE id=$id";
+                        $checkPort = "SELECT port FROM swift_servers WHERE host_id=$hostid AND id!=$id";
+                        $result = mysqli_query($mysql, $checkPort);
+                        while ($row = mysqli_fetch_array($result)) {
+                            $sqlPort = intval(trim($row['port']));
+                            if ($sqlPort == $gport) {
+                                $error = true;
+                                $errstr = "The port $gport is already defined in the system for this host!";
+                                break;
+                            }
+                        }
+                        if (!$error) {
+                            mysqli_query($mysql, $query);
+                            echo "<h2>Server has been updated!</h2>";
+                        } else {
+                            echo "<h2>$errstr</h2>";
+                        }
+                        
+                    }
+                
+                ?>
                 <form method="get" id="srv">
                     <input type="hidden" name="id" value="<?php echo $id; ?>">
                     <?php
                     //get the server data.
-                    $query = "SELECT swift_servers.name AS srvname, swift_servers.port AS srvport, swift_servers.script AS srvcmd, swift_hosts.name AS hostname, swift_hosts.id AS hostid, swift_users.username AS owner, swift_users.id AS ownerid, swift_hosts.islinux AS linux FROM swift_servers, swift_hosts, swift_users WHERE swift_servers.owner_id = swift_users.id AND swift_servers.host_id = swift_hosts.id";
+                    $query = "SELECT swift_servers.name AS srvname, swift_servers.port AS srvport, swift_servers.script AS srvcmd, swift_hosts.name AS hostname, swift_hosts.id AS hostid, swift_users.username AS owner, swift_users.id AS ownerid, swift_hosts.islinux AS linux FROM swift_servers, swift_hosts, swift_users WHERE swift_servers.owner_id = swift_users.id AND swift_servers.host_id = swift_hosts.id AND swift_servers.id=$id";
                     $result = mysqli_fetch_array(mysqli_query($mysql, $query));
                     $srvname = trim($result['srvname']);
-                    $srvport = intval(trim($result['port']));
+                    $srvport = intval(trim($result['srvport']));
                     $srvcmd = trim($result['srvcmd']);
                     $hostname = trim($result['hostname']);
                     $owner = trim($result['owner']);
@@ -102,31 +133,7 @@ include '../options/server.php';
                     $islinux = intval(trim($result['linux'])) == 1? true:false;
                     ?>
                     
-                    <label for="sel1">Host server</label>
-                    <br>
-                    <div id="sel1" class="ui selection dropdown">
-                        <input type="hidden" name="host" value="<?php echo $hostid; ?>">
-                        <div class="default text">Server</div>
-                        <i class="dropdown icon"></i>
-                        <div class="menu">
-                        <?php
-                            $query = "SELECT id, name FROM swift_hosts";
-                            $result = mysqli_query($mysql, $query);
-                            $firstHostID = -1;
-                            $isData = false;
-                            
-                            while ($row = mysqli_fetch_array($result)) {
-                                $isData = true;
-                                if ($firstHostID == -1) {
-                                    $firstHostID = $row['id'];
-                                }
-                                echo "<div class=\"item\" data-value=\"" . $row['id'] . "\">" . $row['name'] . "</div>";
-                            }
-                        
-                        ?>
-                        
-                        </div>
-                    </div><br><br>
+                    <input type="hidden" name="hostid" value="<?php echo $hostid; ?>">
                     <label for="sel2">Owner</label>
                     <br>
                     <div id="sel2" class="ui selection dropdown">
@@ -151,12 +158,18 @@ include '../options/server.php';
                         ?>
                         
                         </div>
+                    </div><br><br>
+                    <div class="ui field">
+                        <label>Server name</label>
+                        <input type="text" name="srvname" value="<?php echo $srvname; ?>" required>
                     </div>
                     
+                    <label>Game port</label>
+                    <input type="number" name="gport" value="<?php echo $srvport; ?>" required>
                     <br><br>
                     <label>Start command</label>
                     <br>
-                    <textarea type="text" class="ui text textarea" name="script"><?php echo $srvcmd; ?></textarea>
+                    <textarea type="text" class="ui text textarea" name="script" required><?php echo $srvcmd; ?></textarea>
                     <br><br>
                     <button type="submit" class="ui button blue">Edit game server</button>
                 </form>

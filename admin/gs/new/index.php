@@ -137,8 +137,8 @@ include '../options/server.php';
                         $result = mysqli_fetch_array(mysqli_query($mysql, $startupScript));
                         $filesLocation = trim($result['location']);
                         $startcmd = trim($result['startcmd']);
-                        //$startcmd = str_replace("{port}", $port, $startcmd);
-                        //$startcmd = str_replace("{user}", $account, $startcmd);
+                        //
+                        $startcmd = str_replace("{user}", $account, $startcmd);
                         if ($isLinux == 1) {
                             $command1 = "useradd -m $account";
                             $command2 = "echo \"$account:$accpass\" | chpasswd";
