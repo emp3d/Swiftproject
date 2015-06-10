@@ -42,10 +42,13 @@ function checkStatus($hostIp, $sshport, $account, $accpass) {
 
 function checkServer ($hostIp, $gameport) {
     $fp = fsockopen("udp://$hostIp",$gameport);
-    if (!$fp) {
-        return false;
-    }
     socket_set_timeout($fp, 2);
+    fputs($fp, "\xFF\xFF\xFF\xFFgetinfo");
+    $o = fgets($fp);
+    if ($o) {
+        return true;
+    }
+    sleep(5);
     fputs($fp, "\xFF\xFF\xFF\xFFgetinfo");
     $o = fgets($fp);
     if ($o) {
