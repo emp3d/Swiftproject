@@ -14,12 +14,12 @@ $ip = getRealIP();
         $pass = password_hash($pwd, PASSWORD_DEFAULT);
         $mysql = include '../../config.php';
         
-        $sql1 = "CREATE TABLE swift_admin (id INTEGER NOT NULL AUTO_INCREMENT, username VARCHAR(100) NOT NULL, password VARCHAR(255) NOT NULL, active TINYINT(1), PRIMARY KEY(id), CONSTRAINT sw_unq UNIQUE (username))";
+        $sql1 = "CREATE TABLE swift_admin (id INTEGER NOT NULL AUTO_INCREMENT, username VARCHAR(100) NOT NULL, password VARCHAR(255) NOT NULL, active TINYINT(1) DEFAULT 1, PRIMARY KEY(id), CONSTRAINT sw_unq UNIQUE (username))";
         $sql2 = "INSERT INTO swift_admin (username, password) VALUES ('$user', '$pass')";
         $sql3 = "CREATE TABLE swift_logs (id INTEGER NOT NULL AUTO_INCREMENT, username VARCHAR(100), ip VARCHAR(15), action VARCHAR(255), time VARCHAR(255), PRIMARY KEY(id))";
         $sql4 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('$user', '$ip', 'Installed Swiftproject!', '" . time() . "')";
-        $sql5 = "CREATE TABLE swift_servers (id INTEGER NOT NULL AUTO_INCREMENT, name VARCHAR(100), port INTEGER, owner_id INTEGER NOT NULL, host_id INTEGER NOT NULL, account VARCHAR(100), password VARCHAR(100), active TINYINT(1) DEFAULT 1, script VARCHAR(500), PRIMARY KEY(id), CONSTRAINT unique_name UNIQUE(name)";
-        $sql6 = "CREATE TABLE swift_users (id INTEGER NOT NULL AUTO_INCREMENT, username VARCHAR(100) NOT NULL, password VARCHAR(255) NOT NULL, active TINYINT(1), PRIMARY KEY(id), CONSTRAINT swu_unq UNIQUE (username))";
+        $sql5 = "CREATE TABLE swift_servers (id INTEGER NOT NULL AUTO_INCREMENT, name VARCHAR(100), port INTEGER, owner_id INTEGER NOT NULL, host_id INTEGER NOT NULL, account VARCHAR(100), password VARCHAR(100), active TINYINT(1) DEFAULT 1, script VARCHAR(500), PRIMARY KEY(id), CONSTRAINT unique_name UNIQUE(name))";
+        $sql6 = "CREATE TABLE swift_users (id INTEGER NOT NULL AUTO_INCREMENT, username VARCHAR(100) NOT NULL, password VARCHAR(255) NOT NULL, active TINYINT(1) DEFAULT 1, PRIMARY KEY(id), CONSTRAINT swu_unq UNIQUE (username))";
         $sql7 = "CREATE TABLE swift_hosts (id INTEGER NOT NULL AUTO_INCREMENT, name VARCHAR(100), ip VARCHAR(50) NOT NULL, sshport INTEGER, user VARCHAR(100) NOT NULL, pass VARCHAR(100) NOT NULL, islinux TINYINT(1), PRIMARY KEY(id), CONSTRAINT sw_hunq UNIQUE(ip))";
         $sql8 = "CREATE TABLE swift_loginlog(id INTEGER NOT NULL AUTO_INCREMENT, user VARCHAR(100), ip VARCHAR(15), date VARCHAR(50), PRIMARY KEY(id))";
         $sql9 = "CREATE TABLE swift_game(id INTEGER NOT NULL AUTO_INCREMENT, name VARCHAR(100), location VARCHAR(100), startcmd VARCHAR(255), islinux TINYINT(1), PRIMARY KEY(id))";

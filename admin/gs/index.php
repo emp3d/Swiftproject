@@ -20,6 +20,8 @@ include 'options/server.php';
         $_SESSION['lastactive'] = time();
     }
     
+    $ip = $_SESSION['ip'];
+    
     if (isset($_REQUEST['reboot'])) {
         $id = intval(trim($_REQUEST['reboot']));
         $query = "SELECT swift_servers.account AS account, swift_servers.name AS srvname, swift_servers.password AS accpass, swift_hosts.ip AS hostIp, swift_hosts.sshport AS sshport FROM swift_servers, swift_hosts WHERE swift_servers.host_id=swift_hosts.id AND swift_servers.id='$id'";
@@ -33,7 +35,7 @@ include 'options/server.php';
         $srvname = $result['srvname'];
         $admacc = $_SESSION['username'];
     
-        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Stopped server $srvname.', '" . time() . "')";
+        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Restarted server $srvname.', '" . time() . "')";
         mysqli_query($mysql, $log);
     } else if (isset($_REQUEST['start'])) {
         $id = intval(trim($_REQUEST['start']));
@@ -41,7 +43,7 @@ include 'options/server.php';
         mysqli_query($mysql, $query);sleep(3);
         $srvnamequery = "SELECT name FROM swift_servers WHERE id=$id";
         $result = mysqli_fetch_array(mysqli_query($mysql, $srvnamequery));
-        $srvname = $result['srvname'];
+        $srvname = $result['name'];
         $admacc = $_SESSION['username'];
     
         $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Started server $srvname.', '" . time() . "')";
@@ -60,7 +62,7 @@ include 'options/server.php';
         $srvname = $result['srvname'];
         $admacc = $_SESSION['username'];
         
-        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Started server $srvname.', '" . time() . "')";
+        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Stopped server $srvname.', '" . time() . "')";
         mysqli_query($mysql, $log);
     }
     

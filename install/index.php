@@ -2,6 +2,7 @@
 <?php
     if (file_exists("../config.php")) {
         die("<meta http-equiv=\"refresh\" content=\"0; url=../\" />");
+        echo "a";
     }
 ?>
 <html>

@@ -103,7 +103,7 @@ $mysql = include '../../../config.php';
                         mysqli_query($mysql, $query);
                         echo "<h3>Server parameters updated!</h3>";
                         $admacc = $_SESSION['username'];
-
+                        $srvname = mysqli_real_escape_string($mysql, $srvname);
                         $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Modified host server $srvname.', '" . time() . "')";
                         mysqli_query($mysql, $log);
                     } else {

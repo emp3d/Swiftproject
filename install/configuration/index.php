@@ -4,7 +4,7 @@
     $dbhost = "";
     $dbuser = "";
     $dbpass = "";
-    $db = "";
+    $db = ""; //
     if (file_exists("../../config.php")) {
         die("<meta http-equiv=\"refresh\" content=\"0; url=../../\" />");
     }
