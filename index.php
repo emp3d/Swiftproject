@@ -38,7 +38,7 @@ include 'admin/gs/options/server.php';
         stopServer($hostIp, $sshport, $account, $accpass);sleep(3);
         $srvnamequery = "SELECT name FROM swift_servers WHERE id=$id";
         $result = mysqli_fetch_array(mysqli_query($mysql, $srvnamequery));
-        $srvname = $result['srvname'];
+        $srvname = $result['name'];
         $admacc = $_SESSION['user'];
     
         $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Restarted server $srvname.', '" . time() . "')";
@@ -51,7 +51,7 @@ include 'admin/gs/options/server.php';
         mysqli_query($mysql, $query);sleep(3);
         $srvnamequery = "SELECT name FROM swift_servers WHERE id=$id";
         $result = mysqli_fetch_array(mysqli_query($mysql, $srvnamequery));
-        $srvname = $result['srvname'];
+        $srvname = $result['name'];
         $admacc = $_SESSION['user'];
     
         $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Started server $srvname.', '" . time() . "')";
@@ -71,7 +71,7 @@ include 'admin/gs/options/server.php';
         stopServer($hostIp, $sshport, $account, $accpass);sleep(3);
         $srvnamequery = "SELECT name FROM swift_servers WHERE id=$id";
         $result = mysqli_fetch_array(mysqli_query($mysql, $srvnamequery));
-        $srvname = $result['srvname'];
+        $srvname = $result['name'];
         $admacc = $_SESSION['user'];
     
         $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Stopped server $srvname.', '" . time() . "')";
