@@ -109,6 +109,10 @@ include '../options/server.php';
                         }
                         if (!$error) {
                             mysqli_query($mysql, $query);
+                            $admacc = $_SESSION['username'];
+    
+                            $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Modified server $srvname.', '" . time() . "')";
+                            mysqli_query($mysql, $log);
                             echo "<h2>Server has been updated!</h2>";
                         } else {
                             echo "<h2>$errstr</h2>";

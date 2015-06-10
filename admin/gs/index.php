@@ -22,28 +22,46 @@ include 'options/server.php';
     
     if (isset($_REQUEST['reboot'])) {
         $id = intval(trim($_REQUEST['reboot']));
-        $query = "SELECT swift_servers.account AS account, swift_servers.password AS accpass, swift_hosts.ip AS hostIp, swift_hosts.sshport AS sshport FROM swift_servers, swift_hosts WHERE swift_servers.host_id=swift_hosts.id AND swift_servers.id='$id'";
+        $query = "SELECT swift_servers.account AS account, swift_servers.name AS srvname, swift_servers.password AS accpass, swift_hosts.ip AS hostIp, swift_hosts.sshport AS sshport FROM swift_servers, swift_hosts WHERE swift_servers.host_id=swift_hosts.id AND swift_servers.id='$id'";
         $result = mysqli_fetch_array(mysqli_query($mysql, $query));
         $hostIp = trim($result['hostIp']);
         $sshport = intval(trim($result['sshport']));
         $account = trim($result['account']);
         $accpass = trim($result['accpass']);
+        
         stopServer($hostIp, $sshport, $account, $accpass);sleep(3);
+        $srvname = $result['srvname'];
+        $admacc = $_SESSION['username'];
+    
+        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Stopped server $srvname.', '" . time() . "')";
+        mysqli_query($mysql, $log);
     } else if (isset($_REQUEST['start'])) {
         $id = intval(trim($_REQUEST['start']));
         $query = "UPDATE swift_servers SET active=1 WHERE id=$id";
         mysqli_query($mysql, $query);sleep(3);
+        $srvnamequery = "SELECT name FROM swift_servers WHERE id=$id";
+        $result = mysqli_fetch_array(mysqli_query($mysql, $srvnamequery));
+        $srvname = $result['srvname'];
+        $admacc = $_SESSION['username'];
+    
+        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Started server $srvname.', '" . time() . "')";
+        mysqli_query($mysql, $log);
     } else if (isset($_REQUEST['stop'])) {
         $id = intval(trim($_REQUEST['stop']));
         $query = "UPDATE swift_servers SET active=0 WHERE id=$id";
         mysqli_query($mysql, $query);
-        $query = "SELECT swift_servers.account AS account, swift_servers.password AS accpass, swift_hosts.ip AS hostIp, swift_hosts.sshport AS sshport FROM swift_servers, swift_hosts WHERE swift_servers.host_id=swift_hosts.id AND swift_servers.id='$id'";
+        $query = "SELECT swift_servers.account AS account, swift_servers.name AS srvname, swift_servers.password AS accpass, swift_hosts.ip AS hostIp, swift_hosts.sshport AS sshport FROM swift_servers, swift_hosts WHERE swift_servers.host_id=swift_hosts.id AND swift_servers.id='$id'";
         $result = mysqli_fetch_array(mysqli_query($mysql, $query));
         $hostIp = trim($result['hostIp']);
         $sshport = intval(trim($result['sshport']));
         $account = trim($result['account']);
         $accpass = trim($result['accpass']);
         stopServer($hostIp, $sshport, $account, $accpass);sleep(3);
+        $srvname = $result['srvname'];
+        $admacc = $_SESSION['username'];
+        
+        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Started server $srvname.', '" . time() . "')";
+        mysqli_query($mysql, $log);
     }
     
 ?>

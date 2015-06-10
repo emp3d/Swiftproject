@@ -34,6 +34,9 @@ $mysql = include '../../../config.php';
         $islinux = intval(trim($_REQUEST['os']));
         $query = "UPDATE swift_game SET name='$gsname', location='$gsloc', startcmd='$gscmd', islinux=$islinux WHERE id=$gsid";
         mysqli_query($mysql, $query);
+        $admacc = $_SESSION['username'];
+        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Modified game $gsname', '" . time() . "')";
+        mysqli_query($mysql, $log);
         $success = true;
     }
 ?>

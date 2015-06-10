@@ -25,9 +25,10 @@
     $ip = $_SESSION['ip'];
     $id = intval(trim($_REQUEST['id']));
     
-    $hostidquery = "SELECT host_id, account, password FROM swift_servers WHERE id=$id";
+    $hostidquery = "SELECT host_id, account, password, name FROM swift_servers WHERE id=$id";
     $result = mysqli_fetch_array(mysqli_query($mysql, $hostidquery));
     $hostid = intval(trim($result['host_id']));
+    $gsname = $result['name'];
     $account = trim($result['account']);
     $password = trim($result['password']);
     $hostdata = "SELECT user, pass, sshport, ip, islinux FROM swift_hosts WHERE id=$hostid";
@@ -43,5 +44,9 @@
     ssh2_exec($con, $cmd);
     $query = "DELETE FROM swift_servers WHERE id=$id";
     mysqli_query($mysql, $query);
+    $admacc = $_SESSION['username'];
+    
+    $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Deleted server $gsname.', '" . time() . "')";
+    mysqli_query($mysql, $log);
     die("<meta http-equiv=\"refresh\" content=\"0; url=../?deleted=$id\" />");
 

@@ -17,6 +17,8 @@ $mysql = include '../../config.php';
     } else {
         $_SESSION['lastactive'] = time();
     }
+    $admuser = $_SESSION['username'];
+    $ip = $_SESSION['ip'];
     $error2 = false;
     if (isset($_REQUEST['disable']) && isset($_REQUEST['id'])) {
         $query = "";
@@ -32,9 +34,19 @@ $mysql = include '../../config.php';
                 $error2 = true;
             } else {
                 $query = "UPDATE swift_admin SET active=0 WHERE id=$accid";
+                $accquery = "SELECT username FROM swift_admin WHERE id=$accid";
+                $acc = mysqli_fetch_array(mysqli_query($mysql, $accquery));
+                $acc2 = $acc['username'];
+                $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admuser', '$ip', 'Disabled $acc2\'s admin account.', '" . time() . "')";
+                mysqli_query($mysql, $log);
             }
         } else {
             $query = "UPDATE swift_users SET active=0 WHERE id=$accid";
+            $accquery = "SELECT username FROM swift_users WHERE id=$accid";
+            $acc = mysqli_fetch_array(mysqli_query($mysql, $accquery));
+            $acc2 = $acc['username'];
+            $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admuser', '$ip', 'Disabled $acc2\'s account.', '" . time() . "')";
+            mysqli_query($mysql, $log);
         }
         if (!$error2) {
             mysqli_query($mysql, $query);
@@ -45,8 +57,18 @@ $mysql = include '../../config.php';
         $accid = intval(trim($_REQUEST['id']));
         if ($isadmin) {
             $query = "UPDATE swift_admin SET active=1 WHERE id=$accid";
+            $accquery = "SELECT username FROM swift_admin WHERE id=$accid";
+            $acc = mysqli_fetch_array(mysqli_query($mysql, $accquery));
+            $acc2 = $acc['username'];
+            $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admuser', '$ip', 'Enabled $acc2\'s admin account.', '" . time() . "')";
+            mysqli_query($mysql, $log);
         } else {
             $query = "UPDATE swift_users SET active=1 WHERE id=$accid";
+            $accquery = "SELECT username FROM swift_users WHERE id=$accid";
+            $acc = mysqli_fetch_array(mysqli_query($mysql, $accquery));
+            $acc2 = $acc['username'];
+            $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admuser', '$ip', 'Enabled $acc2\'s account.', '" . time() . "')";
+            mysqli_query($mysql, $log);
         }
         mysqli_query($mysql, $query);
     }

@@ -102,6 +102,10 @@ $mysql = include '../../../config.php';
                         $query = "UPDATE swift_hosts SET name='$srvname', ip='$srvip', sshport=$sshport, user='$srvuser', pass='$password' WHERE id=$id";
                         mysqli_query($mysql, $query);
                         echo "<h3>Server parameters updated!</h3>";
+                        $admacc = $_SESSION['username'];
+
+                        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Modified host server $srvname.', '" . time() . "')";
+                        mysqli_query($mysql, $log);
                     } else {
                         $error = true;
                         $errstr = "Could not connect to the host server over SSH!";

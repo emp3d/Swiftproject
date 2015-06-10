@@ -27,6 +27,7 @@ if (!($mysql instanceof mysqli)) {
                 $_SESSION['lastactive'] = time();
                 $_SESSION['ip'] = $ip;
                 $_SESSION['acc'] = password_hash($user, PASSWORD_DEFAULT);
+                $_SESSION['accid'] = intval(trim($result['id']));
                 die("<meta http-equiv=\"refresh\" content=\"0; url=../\" />");
             } else {
                 $error = true;

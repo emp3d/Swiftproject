@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-delTree("../install2");
+delTree("../install");
 
 function delTree($dir) {
     $files = array_diff(scandir($dir), array('.', '..'));
@@ -16,5 +16,5 @@ function delTree($dir) {
     rmdir($dir);
 }
 
-die("<meta http-equiv=\"refresh\" content=\"0; url=../\" />");
-?>
+die("<meta http-equiv=\"refresh\" content=\"0; url=index.php\" />");
+

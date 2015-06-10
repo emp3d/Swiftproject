@@ -30,8 +30,14 @@ $mysql = include '../../../config.php';
         $query = "";
         if ($admin) {
             $query = "UPDATE swift_admin SET username='$username', password='$passwordHash' WHERE id=$id";
+            $admacc = $_SESSION['username'];
+            $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Modified admin account $username.', '" . time() . "')";
+            mysqli_query($mysql, $log);
         } else {
             $query = "UPDATE swift_users SET username='$username', password='$passwordHash' WHERE id=$id";
+            $admacc = $_SESSION['username'];
+            $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Modified account $username.', '" . time() . "')";
+            mysqli_query($mysql, $log);
         }
         mysqli_query($mysql, $query);
         $modified = true;
