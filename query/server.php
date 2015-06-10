@@ -79,12 +79,6 @@ function rconstatus ($ip, $port, $rcon_pass) {
     $result = rcon ($ip, $port, $rcon_pass, "status");
     $result = explode ("\n", $result);
 
-    # ok, let's deal with the following :
-    #
-    # map: q3wcp9
-    # num score ping name            lastmsg address               qport rate
-    # --- ----- ---- --------------- ------- --------------------- ----- -----
-    #   1    19   33 l33t^n1ck       33 62.212.106.216:27960   5294 25000
 
     print "<table class=\"table table-hover table-bordered\">\n";
     print "<thead>";
@@ -94,7 +88,7 @@ function rconstatus ($ip, $port, $rcon_pass) {
     array_shift($result); // 2nd line : col headers
     array_shift($result); // 3rd line : -- ------ ----
     array_pop($result);
-    array_pop($result); // two empty lines at the end, go figure.
+    array_pop($result); // two empty lines at the end
     foreach ($result as $line) {
         $player = $line;
         preg_match_all("/^\s*(\d+)\s*(\d+)\s*(\d+)(.*?)(\d*)\s*(\S*)\s*(\d*)\s*(\d*)\s*$/", $player, $out);

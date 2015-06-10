@@ -70,7 +70,7 @@ $mysql = include '../../config.php';
   <div class="ui form segment">
   <div class="table-responsive">
             <table class="table table-hover table-bordered">
-                <thead><th>Game name</th><th>Game location</th><th>Start command</th><th>Operation system</th></thead>
+                <thead><th>Game name</th><th>Game location</th><th>Start command</th><th>Operation system</th><th>Options</th></thead>
                 <?php
                     $query = "SELECT * FROM swift_game ORDER BY id ASC";
                     $result = mysqli_query($mysql, $query);
@@ -79,11 +79,12 @@ $mysql = include '../../config.php';
                     
                     while ($row = mysqli_fetch_array($result)) { 
                         $data = true;
+                        $id = intval(trim($row['id']));
                         $os = $row['islinux'] == 1 ? "Linux" : "Windows";
-                    echo "<tr><td>" . $row['name'] . "</td><td>" . $row['location'] . "</td><td>" . $row['startcmd'] . "</td><td>$os</td></tr>";
+                        echo "<tr><td>" . $row['name'] . "</td><td>" . $row['location'] . "</td><td>" . $row['startcmd'] . "</td><td>$os</td><td><center><i class=\"settings icon\" style=\"cursor:pointer;\" title=\"Modify game\" onclick=\"location.href='modify/?id=$id'\"</center></td></tr>";
                     }
                     if (!$data) {
-                        echo "<tr class=\"no-records-found\"><td colspan=\"4\">No records found. You can add a new game by clicking the Add new game button.</td></tr>";
+                        echo "<tr class=\"no-records-found\"><td colspan=\"5\">No records found. You can add a new game by clicking the Add new game button.</td></tr>";
                     }
                 
                 ?>

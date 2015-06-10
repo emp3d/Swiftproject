@@ -80,7 +80,7 @@ $mysql = include '../../config.php';
                     while ($row = mysqli_fetch_array($result)) { 
                         $data = true;
                         $os = $row['islinux'] == 1 ? "Linux" : "Windows";
-                        echo "<tr><td>" . $row['ip'] . "</td><td>" . $row['user'] . "</td><td>$os</td><td>TODO ID - " . $row['id'] . "</td></tr>";
+                        echo "<tr><td>" . $row['ip'] . "</td><td>" . $row['user'] . "</td><td>$os</td><td><center><i class=\"settings icon\" style=\"cursor:pointer;\" onclick=\"location.href='modify/?id=" . $row['id'] . "'\"</center></td></tr>";
                     }
                     if (!$data) {
                         echo "<tr class=\"no-records-found\"><td colspan=\"4\">No records found. You can add a new host machine by clicking the Add new host button.</td></tr>";
