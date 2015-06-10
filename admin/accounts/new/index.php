@@ -76,6 +76,7 @@ $mysql = include '../../../config.php';
                     <?php
                     if (isset($_REQUEST['user']) && isset($_REQUEST['password'])) {
                         $user = $_REQUEST['user'];
+                        $user = mysqli_real_escape_string($mysql, $user);
                         $password = $_REQUEST['password'];
                         $pass = password_hash($password, PASSWORD_DEFAULT);
                         $isAdmin = isset($_REQUEST['isAdmin']);

@@ -21,20 +21,34 @@ $mysql = include '../../../config.php';
     $username = $_SESSION['username'];
     $ip = $_SESSION['ip'];
     $modified = false;
-    if (isset($_REQUEST['username']) && isset($_REQUEST['password']) && isset($_REQUEST['id']) && isset($_REQUEST['admin'])) {
+    if (isset($_REQUEST['username']) && isset($_REQUEST['id']) && isset($_REQUEST['admin'])) {
         $username = trim($_REQUEST['username']);
+        $username = htmlentities($username);
+        $username = mysqli_real_escape_string($mysql, $username);
         $password = trim($_REQUEST['password']);
+        $setPassword = true;
+        if (strlen($password) == 0) {
+            $setPassword = false;
+        }
         $id = intval(trim($_REQUEST['id']));
         $admin = intval(trim($_REQUEST['admin'])) == 1? true:false;
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
         $query = "";
         if ($admin) {
-            $query = "UPDATE swift_admin SET username='$username', password='$passwordHash' WHERE id=$id";
+            if ($setPassword) {
+                $query = "UPDATE swift_admin SET username='$username', password='$passwordHash' WHERE id=$id";
+            } else {
+                $query = "UPDATE swift_admin SET username='$username' WHERE id=$id";
+            }
             $admacc = $_SESSION['username'];
             $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Modified admin account $username.', '" . time() . "')";
             mysqli_query($mysql, $log);
         } else {
-            $query = "UPDATE swift_users SET username='$username', password='$passwordHash' WHERE id=$id";
+            if ($setPassword) {
+                $query = "UPDATE swift_users SET username='$username', password='$passwordHash' WHERE id=$id";
+            } else {
+                $query = "UPDATE swift_users SET username='$username' WHERE id=$id";
+            }
             $admacc = $_SESSION['username'];
             $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Modified account $username.', '" . time() . "')";
             mysqli_query($mysql, $log);
