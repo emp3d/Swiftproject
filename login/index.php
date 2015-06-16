@@ -18,7 +18,7 @@ if (!($mysql instanceof mysqli)) {
         $user = htmlentities($user);
         
         $user = mysqli_real_escape_string($mysql, $user);
-        $query = "SELECT * FROM swift_users WHERE username='$user' AND active=1";
+        $query = "SELECT * FROM swift_users WHERE username COLLATE Latin1_General_CS='$user' AND active=1";
         $result = mysqli_fetch_array(mysqli_query($mysql, $query));
         if (isset($result['password'])) {
             $hash = $result['password'];
