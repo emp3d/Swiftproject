@@ -2,7 +2,6 @@
 <?php
 session_start();
 $mysql = include '../config.php';
-//user lastactive ip acc
     if (!isset($_SESSION['user']) || !isset($_SESSION['lastactive']) || !isset($_SESSION['ip']) || !isset($_SESSION['acc'])) {
         die("<meta http-equiv=\"refresh\" content=\"0; url=../login\" />");
     }
@@ -20,22 +19,24 @@ $mysql = include '../config.php';
     }
     $username = $_SESSION['user'];
     $ip = $_SESSION['ip'];
+    $idquery = "SELECT id FROM swift_users WHERE username='$username'";
+    $ownerid = intval(trim(mysqli_fetch_array(mysqli_query($mysql, $idquery))[id]));
     ?>
 <html>
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
         <title>Add a new user - Swiftproject Admin Panel</title>
-        <script src="../../../semantic/jquery-2.1.4.min.js"></script>
+        <script src="../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-        <script src="../../../semantic/semantic.js"></script>
-        <script src="../../../semantic/components/dropdown.js"></script>
-        <link href="../../../semantic/semantic.css" rel="stylesheet" />
-        <link href="../../../semantic/components/dropdown.css" rel="stylesheet" />
-        <link href="../../../bootstrap/fileinput/css/fileinput.css" rel="stylesheet" />
-        <script src="../../../bootstrap/fileinput/js/fileinput.js"></script>
+        <script src="../semantic/semantic.js"></script>
+        <script src="../semantic/components/dropdown.js"></script>
+        <link href="../semantic/semantic.css" rel="stylesheet" />
+        <link href="../semantic/components/dropdown.css" rel="stylesheet" />
+        <link href="../bootstrap/fileinput/css/fileinput.css" rel="stylesheet" />
+        <script src="../bootstrap/fileinput/js/fileinput.js"></script>
     </head>
     <body>
         <nav class="navbar navbar-default">
@@ -81,12 +82,19 @@ $mysql = include '../config.php';
             die($mysql);
         }
        
-        $query = "SELECT account, password, host_id, name from swift_servers WHERE id=$id";
+        $query = "SELECT account, password, host_id, name from swift_servers WHERE id=$id AND owner_id=$ownerid";
+        
         $result = mysqli_query($mysql, $query);
         if (!$result) {
             die(mysqli_error($mysql));
         }
         $serverdata = mysqli_fetch_array($result);
+        if (!$serverdata) {
+            $time = time();
+            $log = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('$username', '$ip', 'Tried to update the mod on a server he or she did not own (server id - $id).', '$time')";
+            mysqli_query($mysql, $log);
+            die("<meta http-equiv=\"refresh\" content=\"0; url=../\" />");
+        }
         $account = $serverdata['account'];
         $password = $serverdata['password'];
         $host_id = $serverdata['host_id'];
@@ -95,12 +103,13 @@ $mysql = include '../config.php';
         $hostdata = mysqli_fetch_array(mysqli_query($mysql, $query2));
         $hostip = $hostdata['ip'];
         $sshport = intval(trim($hostdata['sshport']));
-        $connection = ssh2_connect($hostip, $sshport);
-        ssh2_auth_password($connection, $account, $password);
-        if (!$connection) {
-            $message = "SSH failed.";
-        }
+        
         if (isset($_FILES['modso'])) {
+            $connection = ssh2_connect($hostip, $sshport);
+            ssh2_auth_password($connection, $account, $password);
+            if (!$connection) {
+                $message = "SSH failed.";
+            }
             $error = false;
             $target_dir = "tmp/";
             $target_file = $target_dir . basename($_FILES['modso']['name']);
@@ -112,13 +121,14 @@ $mysql = include '../config.php';
             }
             if ((move_uploaded_file($_FILES['modso']['tmp_name'], $target_file)) && !$error) {
                 $message = "File uploaded";
+                $path = dirname(__FILE__) . "/$target_file";
+                $command = "cp $path ~/1fx/";
+                ssh2_exec($connection, $command);
             } else {
                 $message = "File not uploaded.";
             }
             //file at /admin/gs/upload/tmp
-            $path = dirname(__FILE__) . "/$target_file";
-            $command = "cp $path ~/1fx/";
-            ssh2_exec($connection, $command);
+            
             
         }
         
@@ -126,7 +136,8 @@ $mysql = include '../config.php';
         <div class="container"><br><br>
             
             <div class="ui form segment"><?php if ($message !== "") {echo "<h2>$message</h2>";}?><h2>Upload a new mod to a server called <?php echo $srvname; ?></h2>
-        <form method="post" enctype="multipart/form-data">
+                <h4>To do so, press Browse to choose the file you wish to upload. Currently supported file extensions: .so</h4><br>
+                <form method="post" enctype="multipart/form-data">
             <div class="ui input">
                 <input id="fileinput" type="file" class="file" name="modso" accept=".so, .tar.gz, .zip" required></div>
             <div id="errorBlock" class="help-block"></div>

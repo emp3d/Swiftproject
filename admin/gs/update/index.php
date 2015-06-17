@@ -116,13 +116,14 @@ $mysql = include '../../../config.php';
             }
             if ((move_uploaded_file($_FILES['modso']['tmp_name'], $target_file)) && !$error) {
                 $message = "File uploaded";
+                $path = dirname(__FILE__) . "/$target_file";
+                $command = "cp $path ~/1fx/";
+                ssh2_exec($connection, $command);
             } else {
                 $message = "File not uploaded.";
             }
             //file at /admin/gs/upload/tmp
-            $path = dirname(__FILE__) . "/$target_file";
-            $command = "cp $path ~/1fx/";
-            ssh2_exec($connection, $command);
+            
             
         }
         

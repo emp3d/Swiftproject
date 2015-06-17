@@ -179,10 +179,10 @@ include 'admin/gs/options/server.php';
                                 $srvId = intval(trim($row['id']));
                                 $active = intval(trim($row['active'])) == 1? true:false;
                                 $status = "Stopped";
-                                $task = "<i class=\"play icon\" title=\"Start the server\" onclick=\"location.href='?start=$srvId'\" style=\"cursor:pointer;color:blue;\"></i>";
+                                $task = "<i class=\"play icon\" title=\"Start the server\" onclick=\"location.href='?start=$srvId'\" style=\"cursor:pointer;color:blue;\"></i><i class=\"cloud upload icon\" style=\"cursor:pointer;\" title=\"Update the 1fx. Mod on this server\" onclick=\"location.href='update/?id=$srvId'\"></i>";
                                 if ($active) {
                                     $status = "Running";
-                                    $task = "<i class=\"stop icon\" title=\"Stop the server\" onclick=\"location.href='?stop=$srvId';\" style=\"cursor:pointer;color:red;\"></i> <i class=\"refresh icon\" title=\"Restart the server\" style=\"cursor:pointer;color:green;\" onclick=\"location.href='?reboot=$srvId'\"></i>";
+                                    $task = "<i class=\"stop icon\" title=\"Stop the server\" onclick=\"location.href='?stop=$srvId';\" style=\"cursor:pointer;color:red;\"></i> <i class=\"refresh icon\" title=\"Restart the server\" style=\"cursor:pointer;color:green;\" onclick=\"location.href='?reboot=$srvId'\"></i><i class=\"cloud upload icon\" style=\"cursor:pointer;\" title=\"Update the 1fx. Mod on this server\" onclick=\"location.href='update/?id=$srvId'\"></i>";
                                 }
                                 echo "<tr><td>$status</td><td>$name</td><td>$port</td><td>$account</td><td>$password</td><td><center>$task</center></td></tr>";
                             }

@@ -40,7 +40,7 @@ if (!($mysql instanceof mysqli)) {
         $user = $_REQUEST['user'];
         $user = htmlentities($user);
         $user = mysqli_real_escape_string($mysql, $user);
-        $query = "INSERT INTO swift_loginlog (user, ip, date) VALUES ('$user', '$ip', '" . time() . "')";
+        $query = "INSERT INTO swift_loginlog (user, ip, date) VALUES ('$user (Admin panel)', '$ip', '" . time() . "')";
         mysqli_query($mysql, $query);
     }
     
