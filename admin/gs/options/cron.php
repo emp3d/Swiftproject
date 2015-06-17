@@ -12,24 +12,19 @@
         $hostIp = trim($row['hostIp']);
 	$server = $row['srvname'];
         $sshport = intval(trim($row['sshport']));
-
 	$startcmd = str_replace("{port}", $gameport, $startcmd);
-	echo "Checking server $server \n";
+	$query2 = "";
         if (!checkStatus($hostIp, $sshport, $account, $accpass)) {
-            //screen down, start it up again.
   	    $time = time();
-	    $date = date("H:i, F j Y ", $time);
-            echo "Date - $date.\nScreen for server $server is down, restarting...\n";
+	    $query2 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('CRON Task', 'Not available', 'Restarted server $server (screen down)', '$time')";
             startServer($hostIp, $sshport, $account, $accpass, $startcmd);
+	    mysqli_query($mysql, $query2);
         } else if (!checkServer($hostIp, $gameport)) {
-            //screen up, server down, start it up again
 	    $time = time();
-	    $date = date("H:i, F j Y ", $time);
-            echo "Date - $date.\nServer $server is down, restarting...\n";
+            $query2 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('CRON Task', 'Not available', 'Restarted server $server (no reply over getstatus)', '$time')";
             restartServer($hostIp, $sshport, $account, $accpass, $startcmd);
-        } else {
-	    echo "Server $server seems to be up and running!\n";
-	}
+	    mysqli_query($mysql, $query2);
+        } 
     }
 ?>
 

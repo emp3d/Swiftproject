@@ -3,7 +3,7 @@
     $error = false;
     $mysql = include '../../../config.php';
     include '../options/server.php';
-    if (!isset($_SESSION['username']) && !isset($_SESSION['lastactive']) && !isset($_SESSION['ip']) && !isset($_SESSION['admin'])) {
+    if (!isset($_SESSION['username']) || !isset($_SESSION['lastactive']) || !isset($_SESSION['ip']) || !isset($_SESSION['admin'])) {
         die("<meta http-equiv=\"refresh\" content=\"0; url=../../login\" />");
     }
     $admin = $_SESSION['admin'];

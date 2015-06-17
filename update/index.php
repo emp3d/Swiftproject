@@ -1,28 +1,24 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <?php
 session_start();
-$mysql = include '../../../config.php';
-    if (!isset($_SESSION['username']) || !isset($_SESSION['lastactive']) || !isset($_SESSION['ip']) || !isset($_SESSION['admin'])) {
-        die("<meta http-equiv=\"refresh\" content=\"0; url=../../login\" />");
+$mysql = include '../config.php';
+//user lastactive ip acc
+    if (!isset($_SESSION['user']) || !isset($_SESSION['lastactive']) || !isset($_SESSION['ip']) || !isset($_SESSION['acc'])) {
+        die("<meta http-equiv=\"refresh\" content=\"0; url=../login\" />");
     }
-    $admin = $_SESSION['admin'];
-    if (!(password_verify($_SESSION['username'], $admin))) {
-        die("<meta http-equiv=\"refresh\" content=\"0; url=../../login\" />");
+    $admin = $_SESSION['acc'];
+    if (!(password_verify($_SESSION['user'], $admin))) {
+        die("<meta http-equiv=\"refresh\" content=\"0; url=../login\" />");
     }
     $lastactive = $_SESSION['lastactive'];
     $time = time();
     if ($time >= $lastactive + 600) { //10 minutoo
         session_destroy();
-        die("<meta http-equiv=\"refresh\" content=\"0; url=../../login/?r=e\" />");
+        die("<meta http-equiv=\"refresh\" content=\"0; url=../login/?r=e\" />");
     } else {
         $_SESSION['lastactive'] = time();
     }
-    $username = $_SESSION['username'];
+    $username = $_SESSION['user'];
     $ip = $_SESSION['ip'];
     ?>
 <html>

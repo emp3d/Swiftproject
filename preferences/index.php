@@ -3,7 +3,7 @@
 session_start();
 $mysql = include '../config.php';
 //user lastactive ip acc
-    if (!isset($_SESSION['user']) && !isset($_SESSION['lastactive']) && !isset($_SESSION['ip']) && !isset($_SESSION['acc'])) {
+    if (!isset($_SESSION['user']) || !isset($_SESSION['lastactive']) || !isset($_SESSION['ip']) || !isset($_SESSION['acc'])) {
         die("<meta http-equiv=\"refresh\" content=\"0; url=../login\" />");
     }
     $admin = $_SESSION['acc'];

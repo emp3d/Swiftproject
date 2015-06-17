@@ -2,7 +2,7 @@
 <?php
 session_start();
 $mysql = include '../../config.php';
-    if (!isset($_SESSION['username']) && !isset($_SESSION['lastactive']) && !isset($_SESSION['ip']) && !isset($_SESSION['admin'])) {
+    if (!isset($_SESSION['username']) || !isset($_SESSION['lastactive']) || !isset($_SESSION['ip']) || !isset($_SESSION['admin'])) {
         die("<meta http-equiv=\"refresh\" content=\"0; url=../login\" />");
     }
     $admin = $_SESSION['admin'];
@@ -70,7 +70,7 @@ $mysql = include '../../config.php';
   <div class="ui form segment">
   <div class="table-responsive">
             <table class="table table-hover table-bordered">
-                <thead><th>Server IP</th><th>Server account</th><th>Server OS</th><th>Options</th></thead>
+                <thead><th>Server name</th><th>Server IP</th><th>Server account</th><th>Server OS</th><th>Options</th></thead>
                 <?php
                     $query = "SELECT * FROM swift_hosts ORDER BY id ASC";
                     $result = mysqli_query($mysql, $query);
@@ -80,10 +80,10 @@ $mysql = include '../../config.php';
                     while ($row = mysqli_fetch_array($result)) { 
                         $data = true;
                         $os = $row['islinux'] == 1 ? "Linux" : "Windows";
-                        echo "<tr><td>" . $row['ip'] . "</td><td>" . $row['user'] . "</td><td>$os</td><td><center><i class=\"settings icon\" style=\"cursor:pointer;\" onclick=\"location.href='modify/?id=" . $row['id'] . "'\"</center></td></tr>";
+                        echo "<tr><td>" . $row['name'] . "</td><td>" . $row['ip'] . "</td><td>" . $row['user'] . "</td><td>$os</td><td><center><i class=\"settings icon\" style=\"cursor:pointer;\" onclick=\"location.href='modify/?id=" . $row['id'] . "'\"</center></td></tr>";
                     }
                     if (!$data) {
-                        echo "<tr class=\"no-records-found\"><td colspan=\"4\">No records found. You can add a new host machine by clicking the Add new host button.</td></tr>";
+                        echo "<tr class=\"no-records-found\"><td colspan=\"5\">No records found. You can add a new host machine by clicking the Add new host button.</td></tr>";
                     }
                 
                 ?>
