@@ -160,17 +160,21 @@ include 'admin/gs/options/server.php';
                         <thead>
                             <th>Status</th>
                             <th>Name</th>
+                            <th>IP</th>
                             <th>Port</th>
                             <th>Account</th>
                             <th>Password</th>
                             <th>Options</th>
                         </thead>
                         <?php
-                            $query = "SELECT id, name, port, account, password, active FROM swift_servers WHERE owner_id=$id ORDER BY id";
+                            $query = "SELECT host_id, id, name, port, account, password, active FROM swift_servers WHERE owner_id=$id ORDER BY id";
                             //die($query);
                             $result = mysqli_query($mysql, $query);
                             $output = false;
                             while ($row = mysqli_fetch_array($result)) {
+                                $hostid = intval(trim($row['host_id']));
+                                $hostIPquery = "SELECT ip FROM swift_hosts WHERE id=$hostid";
+                                $hostip = trim(mysqli_fetch_array(mysqli_query($mysql, $hostIPquery))['ip']);
                                 $output = true;
                                 $name = $row['name'];
                                 $port = $row['port'];
@@ -184,10 +188,10 @@ include 'admin/gs/options/server.php';
                                     $status = "Running";
                                     $task = "<i class=\"stop icon\" title=\"Stop the server\" onclick=\"location.href='?stop=$srvId';\" style=\"cursor:pointer;color:red;\"></i> <i class=\"refresh icon\" title=\"Restart the server\" style=\"cursor:pointer;color:green;\" onclick=\"location.href='?reboot=$srvId'\"></i><i class=\"cloud upload icon\" style=\"cursor:pointer;\" title=\"Update the 1fx. Mod on this server\" onclick=\"location.href='update/?id=$srvId'\"></i>";
                                 }
-                                echo "<tr><td>$status</td><td>$name</td><td>$port</td><td>$account</td><td>$password</td><td><center>$task</center></td></tr>";
+                                echo "<tr><td>$status</td><td>$name</td><td>$hostip</td><td>$port</td><td>$account</td><td>$password</td><td><center>$task</center></td></tr>";
                             }
                             if (!$output) {
-                                echo "<tr class=\"no-records-found\"><td colspan=\"6\">No records found.</td></tr>";
+                                echo "<tr class=\"no-records-found\"><td colspan=\"7\">No records found.</td></tr>";
                             }
                         ?>
                     </table>
