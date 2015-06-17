@@ -16,15 +16,15 @@
 	$query2 = "";
         if (!checkStatus($hostIp, $sshport, $account, $accpass)) {
   	    $time = time();
-	    $query2 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('CRON Task', 'Not available', 'Restarted server $server (screen down)', '$time')";
+	    $query2 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('CRON Task', '$hostIp', 'Restarted server $server (screen down)', '$time')";
             startServer($hostIp, $sshport, $account, $accpass, $startcmd);
 	    mysqli_query($mysql, $query2);
         } else if (!checkServer($hostIp, $gameport)) {
 	    $time = time();
-            $query2 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('CRON Task', 'Not available', 'Restarted server $server (no reply over getstatus)', '$time')";
+            $query2 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('CRON Task', '$hostIp', 'Restarted server $server (no reply over getstatus)', '$time')";
             restartServer($hostIp, $sshport, $account, $accpass, $startcmd);
 	    mysqli_query($mysql, $query2);
-        } 
+        }
     }
 ?>
 
