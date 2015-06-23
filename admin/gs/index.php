@@ -125,7 +125,7 @@ include 'options/server.php';
       ?>
   <div class="table-responsive">
             <table class="table table-hover table-bordered">
-                <thead><th>Status</th><th>Name</th><th>IP</th><th>Port</th><th>Host server</th><th>Owner</th><th>Account</th><th>Password</th><th>Manage</th></thead>
+                <thead><th>Status</th><th>Name</th><th>Players</th><th>IP</th><th>Port</th><th>Host server</th><th>Owner</th><th>Account</th><th>Password</th><th>Manage</th></thead>
                 <?php
                     //$query = "SELECT swift_servers.id AS srvId, swift_servers.port AS port, swift_hosts.ip AS ip, swift_hosts.sshport AS sshport, swift_servers.account AS acc, swift_servers.password AS pwd, swift_servers.name AS name, swift_users.username AS user, swift_hosts.name AS hostname FROM swift_servers, swift_users, swift_hosts WHERE swift_servers.owner_id=swift_users.id AND swift_servers.host_id=swift_hosts.id";
                     //$query = "SELECT * FROM swift_servers";
@@ -145,12 +145,41 @@ include 'options/server.php';
                         $hostip = $row['ip'];
                         $srvId = $row['srvId'];
                         $sshport = $row['sshport'];
-
+                        
                         $startcmd = trim($row['startcmd']);
                         $startcmd = str_replace("{port}", $port, $startcmd);
                         $data = true;
                         $task = "";
                         if ($active) {
+                            $conn = fsockopen("udp://$hostip", $port);
+                            socket_set_timeout($conn, 1);
+                            fputs($conn, "\xFF\xFF\xFF\xFFgetinfo");
+                            $currentClients = $maxplayers = 0;
+                            while ($o = fgets($conn)) {
+                                $o = str_replace("\xFF\xFF\xFF\xFFprint", "", $o);
+                                $o = str_replace("\xFF\xFF\xFF\xFFinfoResponse", "", $o);
+
+                                if (strlen($o) <= 1) {
+                                    continue;
+                                }
+                                $strings = explode("\\", $o);
+
+                                for ($i = 0; $i < sizeof($strings); $i++) {
+                                    $string = $strings[$i];
+                                    if (strpos($string, "sv_maxclients") !== false) {
+                                        $i++;
+                                        $maxplayers = intval(trim($strings[$i]));
+                                        continue;
+                                    }
+                                    if (strpos($string, "clients") !== false) {
+                                        $i++;
+                                        $currentClients = intval(trim($strings[$i]));
+                                        break;
+                                    }
+                                }
+                            }
+                            fclose($conn);
+                            $players = "$currentClients / $maxplayers";
                             //Before showing everything to the user, parse ALL servers which are active (not stopped) and check that are they running.
                             if (!checkStatus($hostip, $sshport, $acc, $pwd)) {
                                 startServer($hostip, $sshport, $acc, $pwd, $startcmd);
@@ -160,10 +189,11 @@ include 'options/server.php';
                             $active = "Running";
                             $task = "<center><i class=\"stop icon\" title=\"Stop the server\" onclick=\"location.href='?stop=$srvId';\" style=\"cursor:pointer;color:blue;\"></i> <i class=\"refresh icon\" title=\"Restart the server\" style=\"cursor:pointer;color:green;\" onclick=\"location.href='?reboot=$srvId'\"></i> <i class=\"remove icon\" title=\"Delete this server\" style=\"cursor:pointer;color:red;\" onclick=\"srvdel('$srvId', '$name');\"></i> <i class=\"settings icon\" style=\"cursor:pointer;\" title=\"Check & modify the parameters of this server\" onclick=\"location.href='edit/?id=$srvId'\"></i><i class=\"cloud upload icon\" style=\"cursor:pointer;\" title=\"Update the 1fx. Mod on this server\" onclick=\"location.href='update/?id=$srvId'\"></i><i class=\"ban icon\" title=\"Check the banlist of this server\" style=\"cursor:pointer;\" onclick=\"location.href='bl/?srvid=$srvId'\"></i></center>";
                         } else {
+                            $players = "N/A";
                             $active = "Stopped";
                              $task = "<center><i class=\"play icon\" title=\"Start the server\" onclick=\"location.href='?start=$srvId'\" style=\"cursor:pointer;color:blue;\"></i> <i class=\"remove icon\" title=\"Delete this server\" style=\"cursor:pointer;color:red\" onclick=\"srvdel('$srvId', '$name');\"></i> <i class=\"settings icon\" style=\"cursor:pointer;\" title=\"Check & modify the parameters of this server\" onclick=\"location.href='edit/?id=$srvId'\"></i><i class=\"cloud upload icon\" style=\"cursor:pointer;\" title=\"Update the 1fx. Mod on this server\" onclick=\"location.href='update/?id=$srvId'\"></i></center>";
                         }
-                        echo "<tr><td>$active</td><td>$name</td><td>$hostip</td><td>$port</td><td>$hostname</td><td>$owner</td><td>$acc</td><td>$pwd</td><td>$task</td></tr>";
+                        echo "<tr><td>$active</td><td>$name</td><td>$players</td><td>$hostip</td><td>$port</td><td>$hostname</td><td>$owner</td><td>$acc</td><td>$pwd</td><td>$task</td></tr>";
                     }
                     if (!$data) {
                         echo "<tr class=\"no-records-found\"><td colspan=\"9\">No records found. You can add a new host machine by clicking the Add new host button.</td></tr>";

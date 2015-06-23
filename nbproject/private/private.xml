@@ -3,37 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
+            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/gs/options/server.php</file>
             <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/gs/config/index.php</file>
+            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/query/index.php</file>
             <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/login/index.php</file>
+            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/ip.php</file>
+            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/query/server.php</file>
             <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/gs/new/index.php</file>
             <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/login/index.php</file>
-=======
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/preferences/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/login/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/index.php</file>
             <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/gs/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/install/create/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/install/finish/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/delete.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/accounts/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/accounts/new/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/accounts/modify/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/game/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/game/new/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/game/modify/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/gs/delete/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/gs/edit/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/gs/new/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/gs/options/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/gs/options/server.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/hs/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/hs/new/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/hs/modify/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/install/configuration/index.php</file>
-            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/install/index.php</file>
->>>>>>> origin/master
+            <file>file:/C:/Users/Janno/Documents/NetBeansProjects/swiftproject/admin/gs/bl/index.php</file>
         </group>
     </open-files>
 </project-private>

@@ -116,16 +116,9 @@
                     <table class="ui table table-bordered table-hover">
                         <tr><td>
                         <?php
-                            $query = "SELECT swift_servers.name AS srvname, swift_servers.port AS srvport, swift_servers.";
-                            $fp = fsockopen();
+                            
                             echo "RCONPassword - $output<br>";
-                            fputs($conn, "\xFF\xFF\xFF\xFFrcon \"$output\" banlist");
-                            while ($o = fgets($conn)) {
-                                $o = str_replace("\xFF\xFF\xFF\xFFprint", "", $o);
-                                if (strlen($o) <= 1) {
-                                    continue;
-                                }
-                            }
+                            
                             fputs($conn, "\xFF\xFF\xFF\xFFgetinfo");
                             while ($o = fgets($conn)) {
                                 $o = str_replace("\xFF\xFF\xFF\xFFprint", "", $o);
@@ -134,7 +127,6 @@
                                 if (strlen($o) <= 1) {
                                     continue;
                                 }
-                                //data here
                                 $strings = explode("\\", $o);
                                 
                                 for ($i = 0; $i < sizeof($strings); $i++) {
