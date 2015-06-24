@@ -141,7 +141,8 @@
                                     $out = preg_split("/\s+/", $o);
                                     print_r($out);
                                 }*/
-                                echo "$o<br>";
+                                echo "$o\n<br>";
+                                echo strlen($o) . "  ..  len<br>";
                             }
                             
                         ?>

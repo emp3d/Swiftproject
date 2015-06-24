@@ -26,7 +26,7 @@ $mysql = include '../config.php';
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Add a new user - Swiftproject Admin Panel</title>
+        <title>Main</title>
         <script src="../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -35,8 +35,8 @@ $mysql = include '../config.php';
         <script src="../semantic/components/dropdown.js"></script>
         <link href="../semantic/semantic.css" rel="stylesheet" />
         <link href="../semantic/components/dropdown.css" rel="stylesheet" />
-        <link href="../bootstrap/fileinput/css/fileinput.css" rel="stylesheet" />
         <script src="../bootstrap/fileinput/js/fileinput.js"></script>
+        <link href="../bootstrap/fileinput/css/fileinput.css" rel="stylesheet" />
     </head>
     <body>
         <nav class="navbar navbar-default">
@@ -48,26 +48,15 @@ $mysql = include '../config.php';
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Welcome, <?php echo $_SESSION['username']; ?></a>
+            <a class="navbar-brand" href="#">Welcome, <?php echo $_SESSION['user']; ?></a>
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li><a href="../../">Home</a></li>
-              <li class="active"><a href="../">Gameservers</a></li>
-              <li><a href="../../hs">Host servers</a></li>
-              <li><a href="../../accounts/">Accounts</a></li>
-              <li><a href="../../game/">Games</a></li>
-              <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Logs <span class="caret"></span></a>
-                  <ul class="dropdown-menu" role="menu">
-                      <li><a href="../../logs/action/">Action log</a></li>
-                      <li><a href="../../logs/login/">Login log</a></li>
-                  </ul>
-              </li>
+              <li class="active"><a href="../">Home</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="../../preferences"><i class="setting icon"></i>Preferences</a></li>
-              <li><a href="../../logout">Logout</a></li>
+                <li><a href="preferences"><i class="setting icon"></i>Preferences</a></li>
+              <li><a href="logout">Logout</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
