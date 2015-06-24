@@ -47,6 +47,10 @@
     $stream = ssh2_exec($connection, $cmd);
     stream_set_blocking($stream, true);
     $output = fgets($stream);
+    function startsWith($haystack, $needle) {
+        $length = strlen($needle);
+        return (substr($haystack, 0, $length) === $needle);
+    }
     if (!$output) {
         die("Couldn't read the Configuration file (or didn't find the RCONPassword from it).<br>Command - $cmd <br>");
     }
@@ -115,49 +119,36 @@
                 <div class="table-responsive">
                     <table class="ui table table-bordered table-hover">
                         <tr><td>
-                        <?php
-                            
-                            echo "RCONPassword - $output<br>";
-                            
-                            fputs($conn, "\xFF\xFF\xFF\xFFgetinfo");
+                        <?php 
+                            fputs($conn, "\xFF\xFF\xFF\xFFrcon $output banlist");
+                            $i = 0;
                             while ($o = fgets($conn)) {
                                 $o = str_replace("\xFF\xFF\xFF\xFFprint", "", $o);
-                                $o = str_replace("\xFF\xFF\xFF\xFFinfoResponse", "", $o);
-
-                                if (strlen($o) <= 1) {
+                                $o = trim($o);
+                                if (strlen($o) == 0) {
                                     continue;
                                 }
-                                $strings = explode("\\", $o);
-                                
-                                for ($i = 0; $i < sizeof($strings); $i++) {
-                                    $string = $strings[$i];
-                                    if (strpos($string, "sv_maxclients") !== false) {
-                                        $i++;
-                                        $maxplayers = intval(trim($strings[$i]));
-                                        continue;
-                                    }
-                                    if (strpos($string, "clients") !== false) {
-                                        $i++;
-                                        $currentClients = intval(trim($strings[$i]));
-                                        break;
-                                    }
-                                }
+                                $o = stripColors($o);
+                                //$o = htmlentities($o);
+                                //if ($i > 9 && startsWith($o, "[0$i]")) {
+                                  //  $out = preg_split("/\s+/", $o);
+                                    
+                                   // print_r($out);
+                               /* } else if ($i > 99 && startsWith($o, "[$i]")) {
+                                    $out = preg_split("/\s+/", $o);
+                                    print_r($out);
+                                } else if (startsWith($o, "[00$i]")) {
+                                    $out = preg_split("/\s+/", $o);
+                                    print_r($out);
+                                }*/
+                                echo "$o<br>";
                             }
                             
                         ?>
                             </td></tr>
                     </table>
                     <br><br>
-                    <table class="ui table table-hover table-responsive table-bordered">
-                        <thead>
-                        <th>Players</th>
-                        <th>Max players</th>
-                        </thead>
-                        <tr>
-                            <td><?php echo $currentClients; ?></td>
-                            <td><?php echo $maxplayers; ?></td>
-                        </tr>
-                    </table>
+                    
                 </div>
             </div>
         </div>
