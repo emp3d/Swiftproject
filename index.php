@@ -25,6 +25,10 @@ include 'admin/gs/options/server.php';
     $action = false;
     $msg = "";
     if (isset($_REQUEST['reboot'])) {
+        $reason = $_REQUEST['reason'];
+        $reason = trim($reason);
+        $reason = htmlentities($reason);
+        mysqli_real_escape_string($mysql, $reason);
         $action = true;
         $msg = "Server has been rebooted.";
         $id = intval(trim($_REQUEST['reboot']));
@@ -41,7 +45,7 @@ include 'admin/gs/options/server.php';
         $srvname = $result['name'];
         $admacc = $_SESSION['user'];
     
-        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Restarted server $srvname.', '" . time() . "')";
+        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Restarted server $srvname, reason - $reason', '" . time() . "')";
         mysqli_query($mysql, $log);
     } else if (isset($_REQUEST['start'])) {
         $action = true;
@@ -57,6 +61,10 @@ include 'admin/gs/options/server.php';
         $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Started server $srvname.', '" . time() . "')";
         mysqli_query($mysql, $log);
     } else if (isset($_REQUEST['stop'])) {
+        $reason = $_REQUEST['reason'];
+        $reason = trim($reason);
+        $reason = htmlentities($reason);
+        mysqli_real_escape_string($mysql, $reason);
         $action = true;
         $msg = "Server has been stopped.";
         $id = intval(trim($_REQUEST['stop']));
@@ -74,7 +82,7 @@ include 'admin/gs/options/server.php';
         $srvname = $result['name'];
         $admacc = $_SESSION['user'];
     
-        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Stopped server $srvname.', '" . time() . "')";
+        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Stopped server $srvname, reason - $reason', '" . time() . "')";
         mysqli_query($mysql, $log);
     }
     
@@ -156,7 +164,7 @@ include 'admin/gs/options/server.php';
                 ?>
                 <h4>Your servers</h4>
                 <div class="table-responsive">
-                    <table class="table table-hover table-bordered">
+                    <table class="ui table table-hover table-bordered">
                         <thead>
                             <th>Status</th>
                             <th>Name</th>
@@ -188,7 +196,7 @@ include 'admin/gs/options/server.php';
                                 $task = "<i class=\"play icon\" title=\"Start the server\" onclick=\"location.href='?start=$srvId'\" style=\"cursor:pointer;color:blue;\"></i><i class=\"cloud upload icon\" style=\"cursor:pointer;\" title=\"Update the 1fx. Mod on this server\" onclick=\"location.href='update/?id=$srvId'\"></i>";
                                 if ($active) {
                                     $status = "Running";
-                                    $task = "<i class=\"stop icon\" title=\"Stop the server\" onclick=\"location.href='?stop=$srvId';\" style=\"cursor:pointer;color:red;\"></i> <i class=\"refresh icon\" title=\"Restart the server\" style=\"cursor:pointer;color:green;\" onclick=\"location.href='?reboot=$srvId'\"></i><i class=\"cloud upload icon\" style=\"cursor:pointer;\" title=\"Update the 1fx. Mod on this server\" onclick=\"location.href='update/?id=$srvId'\"></i>";
+                                    $task = "<i class=\"stop icon\" title=\"Stop the server\" onclick=\"serverAction(true, $srvId);\" style=\"cursor:pointer;color:red;\"></i> <i class=\"refresh icon\" title=\"Restart the server\" style=\"cursor:pointer;color:green;\" onclick=\"serverAction(false, $srvId);\"></i><i class=\"cloud upload icon\" style=\"cursor:pointer;\" title=\"Update the 1fx. Mod on this server\" onclick=\"location.href='update/?id=$srvId'\"></i>";
                                 }
                                 echo "<tr><td>$status</td><td>$name</td><td>$players</td><td>$hostip</td><td>$port</td><td>$account</td><td>$password</td><td><center>$task</center></td></tr>";
                             }
@@ -200,5 +208,22 @@ include 'admin/gs/options/server.php';
                 </div>
             </div>
         </div>
+        <script>
+            function serverAction(stop, srvid) {
+                if (stop) {
+                    var x = prompt("Please enter the reason why you want to stop this server.");
+                    x = x.trim();
+                    if (x.length !== 0) {
+                        location.href='?stop=' + srvid + '&reason=' + x;
+                    }
+                } else {
+                    var x = prompt("Please enter the reason why you want to restart this server.");
+                    x = x.trim();
+                    if (x.length !== 0) {
+                        location.href='?reboot=' + srvid + '&reason=' + x;
+                    }
+                }
+            }
+        </script>
     </body>
 </html>

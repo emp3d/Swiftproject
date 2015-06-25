@@ -72,7 +72,7 @@ $mysql = include '../config.php';
             
       <h3>Latest actions</h3><br>
                 <div class="table-responsive">
-                <table class="table table-hover table-bordered">
+                <table class="ui table table-hover table-bordered">
                     <thead><th>User</th><th>IP</th><th>Action</th><th>Time</th></thead>
                     <?php
                         

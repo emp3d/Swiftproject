@@ -131,7 +131,7 @@ $mysql = include '../../config.php';
             ?>
             <h3>Normal accounts</h3>
             <div class="table-responsive">
-            <table class="table table-hover table-bordered">
+            <table class="ui table table-hover table-bordered">
                 
                 <thead><th>Username</th><th>Options</th></thead>
                 <?php
@@ -152,7 +152,7 @@ $mysql = include '../../config.php';
                 ?>
             </table></div>
             <h3>Administrator accounts</h3><div class="table-responsive">
-            <table class="table table-hover table-bordered">
+            <table class="ui table table-hover table-bordered">
                 
                 <thead><th>Username</th><th>Options</th></thead>
                 <?php
@@ -171,11 +171,11 @@ $mysql = include '../../config.php';
                 }
                 
                 ?>
-            </table></div>
+            </table></div><br><br>
             <center><button type="button" onclick="location.href='new'" class="ui button blue">Add a new user</button></center>
             
             <h3>Latest actions</h3><br><div class="table-responsive">
-                <table class="table table-bordered table-hover">
+                <table class="ui table table-bordered table-hover">
                     <thead><th>User</th><th>IP</th><th>Action</th><th>Time</th></thead><tbody>
                     <?php
                         

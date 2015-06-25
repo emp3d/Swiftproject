@@ -78,9 +78,9 @@ $page = setPage();
         <div class="container"> <br><br>
             
             <div class="ui form segment">
-                Failed logins<br>
+                <h3>Failed logins</h3><br>
                 <div class="table-responsive">
-                <table class="table table-bordered table-hover">
+                <table class="ui table table-bordered table-hover">
                     <thead><th>User</th><th>IP</th><th>Time</th></thead>
                     <?php
                         $query = "SELECT Count(*) FROM swift_loginlog";

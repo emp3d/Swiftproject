@@ -69,7 +69,7 @@ $mysql = include '../../config.php';
         <div class="container"> <br><br>
   <div class="ui form segment">
   <div class="table-responsive">
-            <table class="table table-hover table-bordered">
+            <table class="ui table table-hover table-bordered">
                 <thead><th>Server name</th><th>Server IP</th><th>Server account</th><th>Server OS</th><th>Options</th></thead>
                 <?php
                     $query = "SELECT * FROM swift_hosts ORDER BY id ASC";
