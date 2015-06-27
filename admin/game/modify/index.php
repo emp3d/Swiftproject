@@ -39,12 +39,18 @@ $mysql = include '../../../config.php';
         mysqli_query($mysql, $log);
         $success = true;
     }
+    $query = "SELECT * FROM swift_game WHERE id=$id";
+    $result = mysqli_fetch_array(mysqli_query($mysql, $query));
+    $gamename = trim($result['name']);
+    $location = trim($result['location']);
+    $startcmd = trim($result['startcmd']);
+    $islinux = intval(trim($result['islinux']));
 ?>
 <html>
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Add a new user - Swiftproject Admin Panel</title>
+        <title>Modify game <?php echo $gamename; ?> | 1fx. # Server Panel</title>
         <script src="../../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -97,14 +103,7 @@ $mysql = include '../../../config.php';
                ?>
                 <h3>You can change the game parameters here</h3>
                 <form method="get">
-                    <?php
-                    $query = "SELECT * FROM swift_game WHERE id=$id";
-                    $result = mysqli_fetch_array(mysqli_query($mysql, $query));
-                    $gamename = trim($result['name']);
-                    $location = trim($result['location']);
-                    $startcmd = trim($result['startcmd']);
-                    $islinux = intval(trim($result['islinux']));
-                    ?>
+
                     <input type="hidden" name="id" value="<?php echo $id; ?>">
                     <div class="field">
                         <label>Game name</label>

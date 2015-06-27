@@ -34,13 +34,23 @@ include '../options/server.php';
         }
         return $password;
     }
+    $query = "SELECT swift_servers.name AS srvname, swift_servers.port AS srvport, swift_servers.script AS srvcmd, swift_hosts.name AS hostname, swift_hosts.id AS hostid, swift_users.username AS owner, swift_users.id AS ownerid, swift_hosts.islinux AS linux FROM swift_servers, swift_hosts, swift_users WHERE swift_servers.owner_id = swift_users.id AND swift_servers.host_id = swift_hosts.id AND swift_servers.id=$id";
+    $result = mysqli_fetch_array(mysqli_query($mysql, $query));
+    $srvname = trim($result['srvname']);
+    $srvport = intval(trim($result['srvport']));
+    $srvcmd = trim($result['srvcmd']);
+    $hostname = trim($result['hostname']);
+    $owner = trim($result['owner']);
+    $hostid = intval(trim($result['hostid']));
+    $ownerid = intval(trim($result['ownerid']));
+    $islinux = intval(trim($result['linux'])) == 1? true:false;
     
 ?>
 <html>
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Add a new user - Swiftproject Admin Panel</title>
+        <title>Modify server <?php echo $srvname; ?> | 1fx. # Server Panel</title>
         <script src="../../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -125,16 +135,7 @@ include '../options/server.php';
                     <input type="hidden" name="id" value="<?php echo $id; ?>">
                     <?php
                     //get the server data.
-                    $query = "SELECT swift_servers.name AS srvname, swift_servers.port AS srvport, swift_servers.script AS srvcmd, swift_hosts.name AS hostname, swift_hosts.id AS hostid, swift_users.username AS owner, swift_users.id AS ownerid, swift_hosts.islinux AS linux FROM swift_servers, swift_hosts, swift_users WHERE swift_servers.owner_id = swift_users.id AND swift_servers.host_id = swift_hosts.id AND swift_servers.id=$id";
-                    $result = mysqli_fetch_array(mysqli_query($mysql, $query));
-                    $srvname = trim($result['srvname']);
-                    $srvport = intval(trim($result['srvport']));
-                    $srvcmd = trim($result['srvcmd']);
-                    $hostname = trim($result['hostname']);
-                    $owner = trim($result['owner']);
-                    $hostid = intval(trim($result['hostid']));
-                    $ownerid = intval(trim($result['ownerid']));
-                    $islinux = intval(trim($result['linux'])) == 1? true:false;
+                    
                     ?>
                     
                     <input type="hidden" name="hostid" value="<?php echo $hostid; ?>">

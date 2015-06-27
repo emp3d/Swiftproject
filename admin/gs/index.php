@@ -79,7 +79,7 @@ include 'options/server.php';
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Main</title>
+        <title>Gameservers | 1fx. # Server Panel</title>
         <script src="../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -132,7 +132,7 @@ include 'options/server.php';
       }
       ?>
   <div class="table-responsive">
-            <table class="ui table table-hover table-bordered">
+            <table class="table table-hover table-bordered">
                 <thead><th>Status</th><th>Name</th><th>Players</th><th>IP</th><th>Port</th><th>Host server</th><th>Owner</th><th>Account</th><th>Password</th><th>Manage</th></thead>
                 <?php
                     //$query = "SELECT swift_servers.id AS srvId, swift_servers.port AS port, swift_hosts.ip AS ip, swift_hosts.sshport AS sshport, swift_servers.account AS acc, swift_servers.password AS pwd, swift_servers.name AS name, swift_users.username AS user, swift_hosts.name AS hostname FROM swift_servers, swift_users, swift_hosts WHERE swift_servers.owner_id=swift_users.id AND swift_servers.host_id=swift_hosts.id";

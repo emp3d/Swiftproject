@@ -21,12 +21,43 @@ $mysql = include '../config.php';
     $ip = $_SESSION['ip'];
     $idquery = "SELECT id FROM swift_users WHERE username='$username'";
     $ownerid = intval(trim(mysqli_fetch_array(mysqli_query($mysql, $idquery))[id]));
+    $message = "";
+        if (!isset($_GET['id'])) {
+            die("<meta http-equiv=\"refresh\" content=\"0; url=../\" />");
+        }
+        $id = intval(trim($_GET['id']));
+        if (!$mysql) {
+            die($mysql);
+        }
+       
+        $query = "SELECT account, password, host_id, name from swift_servers WHERE id=$id AND owner_id=$ownerid";
+        
+        $result = mysqli_query($mysql, $query);
+        if (!$result) {
+            die(mysqli_error($mysql));
+        }
+        $serverdata = mysqli_fetch_array($result);
+        if (!$serverdata) {
+            $time = time();
+            $log = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('$username', '$ip', 'Tried to update the mod on a server he or she did not own (server id - $id).', '$time')";
+            mysqli_query($mysql, $log);
+            die("<meta http-equiv=\"refresh\" content=\"0; url=../\" />");
+        }
+        $account = $serverdata['account'];
+        $password = $serverdata['password'];
+        $host_id = $serverdata['host_id'];
+        $srvname = $serverdata['name'];
+        $query2 = "SELECT ip, sshport FROM swift_hosts WHERE id=$host_id";
+        $hostdata = mysqli_fetch_array(mysqli_query($mysql, $query2));
+        $hostip = $hostdata['ip'];
+        $sshport = intval(trim($hostdata['sshport']));
+        
     ?>
 <html>
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Main</title>
+        <title>Update server <?php echo $srvname; ?> | 1fx. # Server Panel</title>
         <script src="../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -62,36 +93,6 @@ $mysql = include '../config.php';
         </div><!--/.container-fluid -->
       </nav>
         <?php
-        $message = "";
-        if (!isset($_GET['id'])) {
-            die("<meta http-equiv=\"refresh\" content=\"0; url=../\" />");
-        }
-        $id = intval(trim($_GET['id']));
-        if (!$mysql) {
-            die($mysql);
-        }
-       
-        $query = "SELECT account, password, host_id, name from swift_servers WHERE id=$id AND owner_id=$ownerid";
-        
-        $result = mysqli_query($mysql, $query);
-        if (!$result) {
-            die(mysqli_error($mysql));
-        }
-        $serverdata = mysqli_fetch_array($result);
-        if (!$serverdata) {
-            $time = time();
-            $log = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('$username', '$ip', 'Tried to update the mod on a server he or she did not own (server id - $id).', '$time')";
-            mysqli_query($mysql, $log);
-            die("<meta http-equiv=\"refresh\" content=\"0; url=../\" />");
-        }
-        $account = $serverdata['account'];
-        $password = $serverdata['password'];
-        $host_id = $serverdata['host_id'];
-        $srvname = $serverdata['name'];
-        $query2 = "SELECT ip, sshport FROM swift_hosts WHERE id=$host_id";
-        $hostdata = mysqli_fetch_array(mysqli_query($mysql, $query2));
-        $hostip = $hostdata['ip'];
-        $sshport = intval(trim($hostdata['sshport']));
         
         if (isset($_FILES['modso'])) {
             $connection = ssh2_connect($hostip, $sshport);

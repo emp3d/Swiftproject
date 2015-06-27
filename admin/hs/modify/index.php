@@ -24,12 +24,18 @@ $mysql = include '../../../config.php';
         die("<meta http-equiv=\"refresh\" content=\"0; url=../\" />");
     }
     $id = intval(trim($_REQUEST['id']));
+    $query = "SELECT * FROM swift_hosts WHERE id=$id";
+    $result = mysqli_fetch_array(mysqli_query($mysql, $query));
+    $hostip = trim($result['ip']);
+    $name = trim($result['name']);
+    $sshport = intval(trim($result['sshport']));
+    $user = trim($result['user']);
 ?>
 <html>
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Add a new user - Swiftproject Admin Panel</title>
+        <title>Modify hostserver <?php echo $name; ?> | 1fx. # Server Panel</title>
         <script src="../../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -119,14 +125,7 @@ $mysql = include '../../../config.php';
                 <h3>You can change the parameters here</h3>
                 <h5>If you want to change the parameters, you need to provide the password to the account you can enter below.</h5><br>
                 <form method="get">
-                    <?php
-                    $query = "SELECT * FROM swift_hosts WHERE id=$id";
-                    $result = mysqli_fetch_array(mysqli_query($mysql, $query));
-                    $hostip = trim($result['ip']);
-                    $name = trim($result['name']);
-                    $sshport = intval(trim($result['sshport']));
-                    $user = trim($result['user']);
-                    ?>
+                    
                     <input type="hidden" name="id" value="<?php echo $id; ?>">
                     <div class="field">
                         <label>Host IP</label>

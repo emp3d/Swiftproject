@@ -28,25 +28,46 @@ $ip = getRealIP();
             die(mysqli_error($mysql));
         }
         
-        $result2 = mysqli_query($mysql, $sql2);
-        if (!$result2) {
+        $result = mysqli_query($mysql, $sql2);
+        if (!$result) {
             die(mysqli_error($mysql));
         }
-        mysqli_query($mysql, $sql3);
+        $result = mysqli_query($mysql, $sql3);
+        if (!$result) {
+            die(mysqli_error($mysql));
+        }
+        $result = mysqli_query($mysql, $sql4);
+        if (!$result) {
+            die(mysqli_error($mysql));
+        }
+        $result = mysqli_query($mysql, $sql5);
+        if (!$result) {
+            die(mysqli_error($mysql));
+        }
+        $result = mysqli_query($mysql, $sql6);
+        if (!$result) {
+            die(mysqli_error($mysql));
+        }
+        $result = mysqli_query($mysql, $sql7);
+        if (!$result) {
+            die(mysqli_error($mysql));
+        }
+        $result = mysqli_query($mysql, $sql8);
+        if (!$result) {
+            die(mysqli_error($mysql));
+        }
+        $result = mysqli_query($mysql, $sql9);
+        if (!$result) {
+            die(mysqli_error($mysql));
+        }
         
-        mysqli_query($mysql, $sql4);
-        mysqli_query($mysql, $sql5);
-        mysqli_query($mysql, $sql6);
-        mysqli_query($mysql, $sql7);
-        mysqli_query($mysql, $sql8);
-        mysqli_query($mysql, $sql9);
     }
 ?>
 <html>
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Create administrator account - Swiftproject</title>
+        <title>Create an administrator account - 1fx. # Server Panel</title>
         <script src="../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">

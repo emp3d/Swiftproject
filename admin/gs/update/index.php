@@ -24,12 +24,22 @@ $mysql = include '../../../config.php';
     }
     $username = $_SESSION['username'];
     $ip = $_SESSION['ip'];
-    ?>
+    $query = "SELECT account, password, host_id, name from swift_servers WHERE id=$id";
+    $result = mysqli_query($mysql, $query);
+    if (!$result) {
+        die(mysqli_error($mysql));
+    }
+    $serverdata = mysqli_fetch_array($result);
+    $account = $serverdata['account'];
+    $password = $serverdata['password'];
+    $host_id = $serverdata['host_id'];
+    $srvname = $serverdata['name'];
+?>
 <html>
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Add a new user - Swiftproject Admin Panel</title>
+        <title>Update mod on server <?php echo $srvname; ?> | 1fx. # Server Panel</title>
         <script src="../../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">

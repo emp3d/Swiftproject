@@ -77,7 +77,7 @@ $mysql = include '../../config.php';
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Main</title>
+        <title>Accounts | 1fx. # Server Panel</title>
         <script src="../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -131,7 +131,7 @@ $mysql = include '../../config.php';
             ?>
             <h3>Normal accounts</h3>
             <div class="table-responsive">
-            <table class="ui table table-hover table-bordered">
+            <table class="table table-hover table-bordered">
                 
                 <thead><th>Username</th><th>Options</th></thead>
                 <?php
@@ -152,7 +152,7 @@ $mysql = include '../../config.php';
                 ?>
             </table></div>
             <h3>Administrator accounts</h3><div class="table-responsive">
-            <table class="ui table table-hover table-bordered">
+            <table class="table table-hover table-bordered">
                 
                 <thead><th>Username</th><th>Options</th></thead>
                 <?php
@@ -175,7 +175,7 @@ $mysql = include '../../config.php';
             <center><button type="button" onclick="location.href='new'" class="ui button blue">Add a new user</button></center>
             
             <h3>Latest actions</h3><br><div class="table-responsive">
-                <table class="ui table table-bordered table-hover">
+                <table class="table table-bordered table-hover">
                     <thead><th>User</th><th>IP</th><th>Action</th><th>Time</th></thead><tbody>
                     <?php
                         

@@ -37,11 +37,24 @@ function checkStatus($hostIp, $sshport, $account, $accpass) {
     if (!$output) {
         return false;
     }
+    $cmd2 = "fuser /home/$account/srv.lck";
+    $stream = ssh2_exec($con, $cmd2);
+    stream_set_blocking($stream, true);
+    $output = fgets($stream);
+    if (!$output || strlen(trim($output)) == 0) {
+        sleep(5);
+        $stream = ssh2_exec($con, $cmd2);
+        stream_set_blocking($stream, true);
+        $output = fgets($stream);
+        if (!$output || strlen(trim($output)) == 0) {
+           return false;
+        }
+    }
     return true;
 }
 
 function checkServer ($hostIp, $gameport) {
-    $fp = fsockopen("udp://$hostIp",$gameport);
+    /*$fp = fsockopen("udp://$hostIp",$gameport);
     socket_set_timeout($fp, 2);
     fputs($fp, "\xFF\xFF\xFF\xFFgetinfo");
     $o = fgets($fp);
@@ -54,7 +67,8 @@ function checkServer ($hostIp, $gameport) {
     if ($o) {
         return true;
     }
-    return false;
+    return false;*/
+    return true;
 }
 
 function addCronJob($hostIp, $sshport, $admacc, $admpass) {

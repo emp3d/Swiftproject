@@ -22,7 +22,7 @@ $mysql = include '../../config.php';
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Main</title>
+        <title>Hostservers | 1fx. # Server Panel</title>
         <script src="../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -69,7 +69,7 @@ $mysql = include '../../config.php';
         <div class="container"> <br><br>
   <div class="ui form segment">
   <div class="table-responsive">
-            <table class="ui table table-hover table-bordered">
+            <table class="table table-hover table-bordered">
                 <thead><th>Server name</th><th>Server IP</th><th>Server account</th><th>Server OS</th><th>Options</th></thead>
                 <?php
                     $query = "SELECT * FROM swift_hosts ORDER BY id ASC";
