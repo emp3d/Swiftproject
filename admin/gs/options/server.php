@@ -77,11 +77,15 @@ function addCronJob($hostIp, $sshport, $admacc, $admpass) {
     $cmd = "crontab -l >> mycron";
     $loc = $_SERVER['DOCUMENT_ROOT'];
     $cmd2 = "echo \"\n* * * * * $loc/swiftproject/admin/gs/options/cron.php\" >> mycron";
-    $cmd3 = "crontab mycron";
+    $cmd3 = "echo \"\n*/5 * * * * $loc/swiftproject/admin/gs/options/cron2.php\" >> mycron";
+    $cmd4 = "crontab mycron";
+    
     $stream = ssh2_exec($con, $cmd);
     stream_set_blocking($stream, true);
     $stream = ssh2_exec($con, $cmd2);
     stream_set_blocking($stream, true);
     $stream = ssh2_exec($con, $cmd3);
+    stream_set_blocking($stream, true);
+    $stream = ssh2_exec($con, $cmd4);
     stream_set_blocking($stream, true);
 }
