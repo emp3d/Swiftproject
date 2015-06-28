@@ -1,7 +1,8 @@
 #!/usr/bin/php
 <?php
-    include '/var/www/swiftproject/admin/gs/options/server.php';
-    $mysql = include '/var/www/swiftproject/config.php';
+    $dir = __DIR__;
+    include "$dir/server.php";
+    $mysql = include "$dir/../../../config.php";
     $setNA = "UPDATE swift_servers SET players='N/A' WHERE active=0";
     mysqli_real_escape_string($mysql, $setNA);
     mysqli_query($mysql, $setNA);

@@ -7,17 +7,17 @@ $page = setPage();
 
 
     if (!isset($_SESSION['username']) || !isset($_SESSION['lastactive']) || !isset($_SESSION['ip']) || !isset($_SESSION['admin'])) {
-        die("<meta http-equiv=\"refresh\" content=\"0; url=login\" />");
+        die("<meta http-equiv=\"refresh\" content=\"0; url=../../login\" />");
     }
     $admin = $_SESSION['admin'];
     if (!(password_verify($_SESSION['username'], $admin))) {
-        die("<meta http-equiv=\"refresh\" content=\"0; url=login\" />");
+        die("<meta http-equiv=\"refresh\" content=\"0; url=../../login\" />");
     }
     $lastactive = $_SESSION['lastactive'];
     $time = time();
     if ($time >= $lastactive + 600) {
         session_destroy();
-        die("<meta http-equiv=\"refresh\" content=\"0; url=login/?r=e\" />");
+        die("<meta http-equiv=\"refresh\" content=\"0; url=../../login/?r=e\" />");
     } else {
         $_SESSION['lastactive'] = time();
     }
