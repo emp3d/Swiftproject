@@ -165,10 +165,8 @@ include 'options/server.php';
                             
                             //Before showing everything to the user, parse ALL servers which are active (not stopped) and check that are they running.
                             if (!checkStatus($hostip, $sshport, $acc, $pwd)) {
-                                startServer($hostip, $sshport, $acc, $pwd, $startcmd);
-                            } else if (!checkServer($hostip, $port)) {
                                 restartServer($hostip, $sshport, $acc, $pwd, $startcmd);
-                            }
+                            } 
                             $active = "Running";
                             $task = "<center><i class=\"stop icon\" title=\"Stop the server\" onclick=\"serverAction(true, $srvId);\" style=\"cursor:pointer;color:blue;\"></i> <i class=\"refresh icon\" title=\"Restart the server\" style=\"cursor:pointer;color:green;\" onclick=\"serverAction(false, $srvId);\"></i> <i class=\"remove icon\" title=\"Delete this server\" style=\"cursor:pointer;color:red;\" onclick=\"srvdel('$srvId', '$name');\"></i> <i class=\"settings icon\" style=\"cursor:pointer;\" title=\"Check & modify the parameters of this server\" onclick=\"location.href='edit/?id=$srvId'\"></i><i class=\"cloud upload icon\" style=\"cursor:pointer;\" title=\"Update the 1fx. Mod on this server\" onclick=\"location.href='update/?id=$srvId'\"></i><i class=\"ban icon\" title=\"Check the banlist of this server\" style=\"cursor:pointer;\" onclick=\"location.href='bl/?srvid=$srvId'\"></i></center>";
                         } else {
