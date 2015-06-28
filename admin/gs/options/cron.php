@@ -14,6 +14,8 @@
 	$server = $row['srvname'];
         $sshport = intval(trim($row['sshport']));
 	$startcmd = str_replace("{port}", $gameport, $startcmd);
+        $date = date("H:i, F j Y ", time());
+        $startcmd = str_replace("{date}", $date, $startcmd);
 	$query2 = "";
         if (!checkStatus($hostIp, $sshport, $account, $accpass)) {
   	    $time = time();

@@ -156,6 +156,9 @@ include 'options/server.php';
                         $players = $row['players'];
                         $startcmd = trim($row['startcmd']);
                         $startcmd = str_replace("{port}", $port, $startcmd);
+                        $date = date("H:i, F j Y ", time());
+                        $startcmd = str_replace("{date}", $date, $startcmd);
+                        
                         $data = true;
                         $task = "";
                         if ($active) {

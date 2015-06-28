@@ -105,7 +105,10 @@ include '../options/server.php';
                         $srvname = trim($_REQUEST['srvname']);
                         $gport = intval(trim($_REQUEST['gport']));
                         $script = trim($_REQUEST['script']);
+                        $startcmd = $script;
                         $hostid = intval(trim($_REQUEST['hostid']));
+                        $srvname = mysqli_real_escape_string($mysql, $srvname);
+                        $script = mysqli_real_escape_string($mysql, $script);
                         $query = "UPDATE swift_servers SET name='$srvname', port='$gport', owner_id='$owner', script='$script' WHERE id=$id";
                         $checkPort = "SELECT port FROM swift_servers WHERE host_id=$hostid AND id!=$id";
                         $result = mysqli_query($mysql, $checkPort);
@@ -118,11 +121,15 @@ include '../options/server.php';
                             }
                         }
                         if (!$error) {
+                           
                             mysqli_query($mysql, $query);
                             $admacc = $_SESSION['username'];
-    
+                            
                             $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Modified server $srvname.', '" . time() . "')";
                             mysqli_query($mysql, $log);
+                            $srvport = $gport;
+                            $srvcmd = $startcmd;
+                            $ownerid = $owner;
                             echo "<h2>Server has been updated!</h2>";
                         } else {
                             echo "<h2>$errstr</h2>";
