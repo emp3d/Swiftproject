@@ -23,6 +23,7 @@ $ip = getRealIP();
         $sql7 = "CREATE TABLE swift_hosts (id INTEGER NOT NULL AUTO_INCREMENT, name VARCHAR(100), ip VARCHAR(50) NOT NULL, sshport INTEGER, user VARCHAR(100) NOT NULL, pass VARCHAR(100) NOT NULL, islinux TINYINT(1), PRIMARY KEY(id), CONSTRAINT sw_hunq UNIQUE(ip))";
         $sql8 = "CREATE TABLE swift_loginlog(id INTEGER NOT NULL AUTO_INCREMENT, user VARCHAR(100), ip VARCHAR(15), date VARCHAR(50), PRIMARY KEY(id))";
         $sql9 = "CREATE TABLE swift_game(id INTEGER NOT NULL AUTO_INCREMENT, name VARCHAR(100), location VARCHAR(100), startcmd VARCHAR(255), islinux TINYINT(1), PRIMARY KEY(id))";
+        $sql10 = "CREATE TABLE swift_alert (id INTEGER NOT NULL AUTO_INCREMENT, srvid INTEGER NOT NULL, text VARCHAR(255) NOT NULL, PRIMARY KEY(id))";
         $result = mysqli_query($mysql, $sql1);
         if (!$result) {
             die(mysqli_error($mysql));
@@ -57,6 +58,10 @@ $ip = getRealIP();
             die(mysqli_error($mysql));
         }
         $result = mysqli_query($mysql, $sql9);
+        if (!$result) {
+            die(mysqli_error($mysql));
+        }
+        $result = mysqli_query($mysql, $sql10);
         if (!$result) {
             die(mysqli_error($mysql));
         }
