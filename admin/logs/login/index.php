@@ -24,6 +24,9 @@ $page = setPage();
     
     function setPage() {
         $whereAmI = isset($_REQUEST[page])? $_REQUEST['page'] : 0;
+        if (intval($whereAmI) == 1) {
+            $whereAmI = 0;
+        }
         return ($whereAmI - 1) * 25;
     }
 ?>
