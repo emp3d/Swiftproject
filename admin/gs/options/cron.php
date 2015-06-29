@@ -20,7 +20,11 @@
 	$query2 = "";
         if (!checkStatus($hostIp, $sshport, $account, $accpass)) {
             //check that is something wrong, has the server been restarting continuously.
-            $checkReboots = "SELECT time FROM swift_logs WHERE username='CRON Task' AND action LIKE '%$server' ORDER BY id DESC LIMIT 5";
+            $checkUser = "SELECT time FROM swift_logs WHERE action LIKE '%tarted server $server%' AND  username != 'CRON Task' ORDER BY id DESC LIMIT 1";
+            $data = mysqli_fetch_array(mysqli_query($mysql, $checkUser));
+            $lastStart = intval(trim($data['time']));
+            
+            $checkReboots = "SELECT time FROM swift_logs WHERE username='CRON Task' AND action LIKE '%$server' AND time>$lastStart ORDER BY id DESC LIMIT 5";
             $getTimes = mysqli_query($mysql, $checkReboots);
             $i = 1;
             $lastTime = time();
