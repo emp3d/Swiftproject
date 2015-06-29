@@ -21,18 +21,13 @@
         if (!checkStatus($hostIp, $sshport, $account, $accpass)) {
             //check that is something wrong, has the server been restarting continuously.
             $checkReboots = "SELECT time FROM swift_logs WHERE username='CRON Task' AND action LIKE '%$server' ORDER BY id DESC LIMIT 5";
-            echo "$checkReboots\n";
             $getTimes = mysqli_query($mysql, $checkReboots);
             $i = 1;
-            $lastTime = 0;
+            $lastTime = time();
             while ($times = mysqli_fetch_array($getTimes)) {
                 $time = intval(trim($times['time']));
-                if ($lastTime == 0) {
-                    $lastTime = $time;
-                } else if ($lastTime - $time <= 75) {
+                if ($lastTime - $time <= 75) {
                     $i++;
-                    
-                    echo $lastTime - $time . "\n$i\n";
                     $lastTime = $time;
                 }
             }
@@ -40,7 +35,8 @@
                 stopServer($hostIp, $sshport, $account, $accpass);
                 $closeServer = "UPDATE swift_servers SET active=0 WHERE id=$srvid";
                 mysqli_query($mysql, $closeServer);
-                $setAlert = "INSERT INTO swift_alert(srvid, text) VALUES('$srvid', 'Server $server did not start correctly and has now been stopped.')";
+                $time = time();
+                $setAlert = "INSERT INTO swift_logs (username, ip, action, time) VALUES('CRON Task', '$hostIp', 'Server $server did not start correctly and has now been stopped.', '$time')";
                 mysqli_query($mysql, $setAlert);
                 break;
             }
