@@ -100,7 +100,7 @@ include '../options/server.php';
                         if (isset($_REQUEST['gsport']) && strlen($_REQUEST['gsport']) > 0) {
                             $port = intval(trim($_REQUEST['gsport']));
                         }
-                        $accountQuery = "SELECT account FROM swift_servers ORDER BY id DESC LIMIT 1";
+                        $accountQuery = "SELECT account FROM swift_servers WHERE host_id=$hostId AND account LIKE 'srv%' ORDER BY id DESC LIMIT 1";
                         $result = mysqli_query($mysql, $accountQuery);
                         $row = mysqli_fetch_array($result);
                         $account = "";
