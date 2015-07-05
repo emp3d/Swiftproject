@@ -94,3 +94,4 @@ function queryMaster() {
     }
     return $servers;
 }
+

@@ -69,6 +69,10 @@
                 }
                 if (!$isServerUp) {
                     $time = time();
+                    $con = ssh2_connect($hostIp, $sshport);
+                    ssh2_auth_password($con, $account, $accpass);
+                    $task = "(echo \"%CPU %MEM ARGS $(date)\" && ps -e -o pcpu,pmem,args --sort=pcpu | cut -d\" \" -f1-5 | tail) >> cpuusage.log";
+                    ssh2_exec($con, $task);
                     $query2 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('CRON Task', '$hostIp', 'Restarted server $server (not visible on 1fx. Master)', '$time')";
                     restartServer($hostIp, $sshport, $account, $accpass, $startcmd);
                     mysqli_query($mysql, $query2);
