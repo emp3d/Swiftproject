@@ -75,7 +75,7 @@ function addCronJob($hostIp, $sshport, $admacc, $admpass) {
 function queryMaster() {
     $str = "";
     $servers = Array();
-    $con = fsockopen("master.1fxmod.org", 20110);
+    $con = fsockopen("udp://master.1fxmod.org", 20110);
     stream_set_timeout($con, 1);
     fputs($con, "\xFF\xFF\xFF\xFFgetservers 2002 empty full");
     while ($o = fgets($con)) {
@@ -92,5 +92,5 @@ function queryMaster() {
             array_push($servers, array($ip, $port));
         }
     }
-    return servers;
+    return $servers;
 }

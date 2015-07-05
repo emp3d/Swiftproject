@@ -48,7 +48,33 @@
 	    $query2 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('CRON Task', '$hostIp', 'Restarted server $server', '$time')";
             restartServer($hostIp, $sshport, $account, $accpass, $startcmd);
 	    mysqli_query($mysql, $query2);
-        } 
+        } else {
+            $servers = queryMaster();
+            $resolvedHostIP = gethostbyname($hostIp);
+            $isServerUp = false;
+            for ($i = 0; $i < sizeof($servers); $i++) {
+                if ($servers[$i][0] == $resolvedHostIP && $servers[$i][1] == $gameport) {
+                    $isServerUp = true;
+                    break;
+                }
+            }
+            if (!$isServerUp) {
+                sleep(5);
+                $servers = queryMaster();
+                for ($i = 0; $i < sizeof($servers); $i++) {
+                    if ($servers[$i][0] == $resolvedHostIP && $servers[$i][1] == $gameport) {
+                        $isServerUp = true;
+                        break;
+                    }
+                }
+                if (!$isServerUp) {
+                    $time = time();
+                    $query2 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('CRON Task', '$hostIp', 'Restarted server $server (not visible on 1fx. Master)', '$time')";
+                    restartServer($hostIp, $sshport, $account, $accpass, $startcmd);
+                    mysqli_query($mysql, $query2);
+                }
+            }
+        }
     }
 ?>
 
