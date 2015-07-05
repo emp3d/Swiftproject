@@ -71,3 +71,26 @@ function addCronJob($hostIp, $sshport, $admacc, $admpass) {
     $stream = ssh2_exec($con, $cmd3);
     stream_set_blocking($stream, true);
 }
+
+function queryMaster() {
+    $str = "";
+    $servers = Array();
+    $con = fsockopen("master.1fxmod.org", 20110);
+    stream_set_timeout($con, 1);
+    fputs($con, "\xFF\xFF\xFF\xFFgetservers 2002 empty full");
+    while ($o = fgets($con)) {
+        $str .= $o;
+    }
+    fputs($con, "\xFF\xFF\xFF\xFFgetservers 2004 empty full");
+    while ($o = fgets($con)) {
+        $str .= $o;
+    }
+    for ($i = 0; $i < strlen($str); $i++) {
+        if ($str[$i] == "\\" && $str[$i + 7] == "\\") {
+            $ip = ord($str[$i + 1]) . "." . ord($str[$i + 2]) . "." . ord($str[$i + 3]) . "." . ord($str[$i + 4]);
+            $port = (ord($str[$i + 5]) << 8) + ord($str[$i + 6]);
+            array_push($servers, array($ip, $port));
+        }
+    }
+    return servers;
+}

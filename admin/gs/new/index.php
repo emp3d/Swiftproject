@@ -37,7 +37,7 @@ include '../options/server.php';
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Add a new user - Swiftproject Admin Panel</title>
+        <title>Add a new gameserver | 1fx. # Server Panel</title>
         <script src="../../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -100,7 +100,7 @@ include '../options/server.php';
                         if (isset($_REQUEST['gsport']) && strlen($_REQUEST['gsport']) > 0) {
                             $port = intval(trim($_REQUEST['gsport']));
                         }
-                        $accountQuery = "SELECT account FROM swift_servers ORDER BY id DESC LIMIT 1";
+                        $accountQuery = "SELECT account FROM swift_servers WHERE host_id=$hostId AND account LIKE 'srv%' ORDER BY id DESC LIMIT 1";
                         $result = mysqli_query($mysql, $accountQuery);
                         $row = mysqli_fetch_array($result);
                         $account = "";

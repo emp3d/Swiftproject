@@ -23,6 +23,10 @@ include 'options/server.php';
     $ip = $_SESSION['ip'];
     
     if (isset($_REQUEST['reboot'])) {
+        $reason = $_REQUEST['reason'];
+        $reason = trim($reason);
+        $reason = htmlentities($reason);
+        mysqli_real_escape_string($mysql, $reason);
         $id = intval(trim($_REQUEST['reboot']));
         $query = "SELECT swift_servers.account AS account, swift_servers.name AS srvname, swift_servers.password AS accpass, swift_hosts.ip AS hostIp, swift_hosts.sshport AS sshport FROM swift_servers, swift_hosts WHERE swift_servers.host_id=swift_hosts.id AND swift_servers.id='$id'";
         $result = mysqli_fetch_array(mysqli_query($mysql, $query));
@@ -35,7 +39,7 @@ include 'options/server.php';
         $srvname = $result['srvname'];
         $admacc = $_SESSION['username'];
     
-        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Restarted server $srvname.', '" . time() . "')";
+        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Restarted server $srvname, reason - $reason', '" . time() . "')";
         mysqli_query($mysql, $log);
     } else if (isset($_REQUEST['start'])) {
         $id = intval(trim($_REQUEST['start']));
@@ -49,6 +53,10 @@ include 'options/server.php';
         $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Started server $srvname.', '" . time() . "')";
         mysqli_query($mysql, $log);
     } else if (isset($_REQUEST['stop'])) {
+        $reason = $_REQUEST['reason'];
+        $reason = trim($reason);
+        $reason = htmlentities($reason);
+        mysqli_real_escape_string($mysql, $reason);
         $id = intval(trim($_REQUEST['stop']));
         $query = "UPDATE swift_servers SET active=0 WHERE id=$id";
         mysqli_query($mysql, $query);
@@ -62,7 +70,7 @@ include 'options/server.php';
         $srvname = $result['srvname'];
         $admacc = $_SESSION['username'];
         
-        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Stopped server $srvname.', '" . time() . "')";
+        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Stopped server $srvname, reason - $reason', '" . time() . "')";
         mysqli_query($mysql, $log);
     }
     
@@ -71,7 +79,7 @@ include 'options/server.php';
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Main</title>
+        <title>Gameservers | 1fx. # Server Panel</title>
         <script src="../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -125,11 +133,11 @@ include 'options/server.php';
       ?>
   <div class="table-responsive">
             <table class="table table-hover table-bordered">
-                <thead><th>Status</th><th>Name</th><th>IP</th><th>Port</th><th>Host server</th><th>Owner</th><th>Account</th><th>Password</th><th>Manage</th></thead>
+                <thead><th>Status</th><th>Name</th><th>Players</th><th>IP</th><th>Port</th><th>Host server</th><th>Owner</th><th>Account</th><th>Password</th><th>Manage</th></thead>
                 <?php
                     //$query = "SELECT swift_servers.id AS srvId, swift_servers.port AS port, swift_hosts.ip AS ip, swift_hosts.sshport AS sshport, swift_servers.account AS acc, swift_servers.password AS pwd, swift_servers.name AS name, swift_users.username AS user, swift_hosts.name AS hostname FROM swift_servers, swift_users, swift_hosts WHERE swift_servers.owner_id=swift_users.id AND swift_servers.host_id=swift_hosts.id";
                     //$query = "SELECT * FROM swift_servers";
-                $query = "SELECT swift_servers.id AS srvId, swift_servers.script AS startcmd, swift_servers.active AS isactive, swift_servers.port AS port, swift_hosts.ip AS ip, swift_hosts.sshport AS sshport, swift_servers.account AS acc, swift_servers.password AS pwd, swift_servers.name AS name, swift_users.username AS user, swift_hosts.name AS hostname FROM swift_servers, swift_users, swift_hosts WHERE swift_servers.owner_id=swift_users.id AND swift_servers.host_id=swift_hosts.id ORDER BY swift_servers.id ASC";
+                $query = "SELECT swift_servers.id AS srvId, swift_servers.players AS players, swift_servers.script AS startcmd, swift_servers.active AS isactive, swift_servers.port AS port, swift_hosts.ip AS ip, swift_hosts.sshport AS sshport, swift_servers.account AS acc, swift_servers.password AS pwd, swift_servers.name AS name, swift_users.username AS user, swift_hosts.name AS hostname FROM swift_servers, swift_users, swift_hosts WHERE swift_servers.owner_id=swift_users.id AND swift_servers.host_id=swift_hosts.id ORDER BY swift_servers.id ASC";
                 $result = mysqli_query($mysql, $query);
                     $data = false;
                     
@@ -145,25 +153,27 @@ include 'options/server.php';
                         $hostip = $row['ip'];
                         $srvId = $row['srvId'];
                         $sshport = $row['sshport'];
-
+                        $players = $row['players'];
                         $startcmd = trim($row['startcmd']);
                         $startcmd = str_replace("{port}", $port, $startcmd);
+                        $date = date("H:i, F j Y ", time());
+                        $startcmd = str_replace("{date}", $date, $startcmd);
+                        
                         $data = true;
                         $task = "";
                         if ($active) {
+                            
                             //Before showing everything to the user, parse ALL servers which are active (not stopped) and check that are they running.
                             if (!checkStatus($hostip, $sshport, $acc, $pwd)) {
-                                startServer($hostip, $sshport, $acc, $pwd, $startcmd);
-                            } else if (!checkServer($hostip, $port)) {
                                 restartServer($hostip, $sshport, $acc, $pwd, $startcmd);
-                            }
+                            } 
                             $active = "Running";
-                            $task = "<center><i class=\"stop icon\" title=\"Stop the server\" onclick=\"location.href='?stop=$srvId';\" style=\"cursor:pointer;color:blue;\"></i> <i class=\"refresh icon\" title=\"Restart the server\" style=\"cursor:pointer;color:green;\" onclick=\"location.href='?reboot=$srvId'\"></i> <i class=\"remove icon\" title=\"Delete this server\" style=\"cursor:pointer;color:red;\" onclick=\"srvdel('$srvId', '$name');\"></i> <i class=\"settings icon\" style=\"cursor:pointer;\" title=\"Check & modify the parameters of this server\" onclick=\"location.href='edit/?id=$srvId'\"></i><i class=\"cloud upload icon\" style=\"cursor:pointer;\" title=\"Update the 1fx. Mod on this server\" onclick=\"location.href='update/?id=$srvId'\"></i></center>";
+                            $task = "<center><i class=\"stop icon\" title=\"Stop the server\" onclick=\"serverAction(true, $srvId);\" style=\"cursor:pointer;color:blue;\"></i> <i class=\"refresh icon\" title=\"Restart the server\" style=\"cursor:pointer;color:green;\" onclick=\"serverAction(false, $srvId);\"></i> <i class=\"remove icon\" title=\"Delete this server\" style=\"cursor:pointer;color:red;\" onclick=\"srvdel('$srvId', '$name');\"></i> <i class=\"settings icon\" style=\"cursor:pointer;\" title=\"Check & modify the parameters of this server\" onclick=\"location.href='edit/?id=$srvId'\"></i><i class=\"cloud upload icon\" style=\"cursor:pointer;\" title=\"Update the 1fx. Mod on this server\" onclick=\"location.href='update/?id=$srvId'\"></i><i class=\"ban icon\" title=\"Check the banlist of this server\" style=\"cursor:pointer;\" onclick=\"location.href='bl/?srvid=$srvId'\"></i></center>";
                         } else {
                             $active = "Stopped";
                              $task = "<center><i class=\"play icon\" title=\"Start the server\" onclick=\"location.href='?start=$srvId'\" style=\"cursor:pointer;color:blue;\"></i> <i class=\"remove icon\" title=\"Delete this server\" style=\"cursor:pointer;color:red\" onclick=\"srvdel('$srvId', '$name');\"></i> <i class=\"settings icon\" style=\"cursor:pointer;\" title=\"Check & modify the parameters of this server\" onclick=\"location.href='edit/?id=$srvId'\"></i><i class=\"cloud upload icon\" style=\"cursor:pointer;\" title=\"Update the 1fx. Mod on this server\" onclick=\"location.href='update/?id=$srvId'\"></i></center>";
                         }
-                        echo "<tr><td>$active</td><td>$name</td><td>$hostip</td><td>$port</td><td>$hostname</td><td>$owner</td><td>$acc</td><td>$pwd</td><td>$task</td></tr>";
+                        echo "<tr><td>$active</td><td>$name</td><td>$players</td><td>$hostip</td><td>$port</td><td>$hostname</td><td>$owner</td><td>$acc</td><td>$pwd</td><td>$task</td></tr>";
                     }
                     if (!$data) {
                         echo "<tr class=\"no-records-found\"><td colspan=\"9\">No records found. You can add a new host machine by clicking the Add new host button.</td></tr>";
@@ -183,6 +193,21 @@ include 'options/server.php';
         var x = confirm("Are you sure you want to delete the server called " + j + "?\nThis deletes ALL files related to this gameserver (including the account)!");
         if (x) {
             location.href = 'delete/?id=' + i;
+        }
+    }
+    function serverAction(stop, srvid) {
+        if (stop) {
+            var x = prompt("Please enter the reason why you want to stop this server.");
+            x = x.trim();
+            if (x.length !== 0) {
+                location.href='?stop=' + srvid + '&reason=' + x;
+            }
+        } else {
+            var x = prompt("Please enter the reason why you want to restart this server.");
+            x = x.trim();
+            if (x.length !== 0) {
+                location.href='?reboot=' + srvid + '&reason=' + x;
+            }
         }
     }
 jQuery('ul.nav li.dropdown').hover(function() {

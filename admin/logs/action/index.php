@@ -7,23 +7,26 @@ $page = setPage();
 
 
     if (!isset($_SESSION['username']) || !isset($_SESSION['lastactive']) || !isset($_SESSION['ip']) || !isset($_SESSION['admin'])) {
-        die("<meta http-equiv=\"refresh\" content=\"0; url=login\" />");
+        die("<meta http-equiv=\"refresh\" content=\"0; url=../../login\" />");
     }
     $admin = $_SESSION['admin'];
     if (!(password_verify($_SESSION['username'], $admin))) {
-        die("<meta http-equiv=\"refresh\" content=\"0; url=login\" />");
+        die("<meta http-equiv=\"refresh\" content=\"0; url=../../login\" />");
     }
     $lastactive = $_SESSION['lastactive'];
     $time = time();
     if ($time >= $lastactive + 600) {
         session_destroy();
-        die("<meta http-equiv=\"refresh\" content=\"0; url=login/?r=e\" />");
+        die("<meta http-equiv=\"refresh\" content=\"0; url=../../login/?r=e\" />");
     } else {
         $_SESSION['lastactive'] = time();
     }
     
     function setPage() {
         $whereAmI = isset($_REQUEST[page])? $_REQUEST['page'] : 0;
+        if (intval($whereAmI) == 1) {
+            $whereAmI = 0;
+        }
         return ($whereAmI - 1) * 25;
     }
 ?>
@@ -31,7 +34,7 @@ $page = setPage();
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Main</title>
+        <title>Action log | 1fx. # Server Panel</title>
         <script src="../../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -78,7 +81,7 @@ $page = setPage();
         <div class="container"> <br><br>
             
             <div class="ui form segment">
-                Latest actions<br>
+                <h3>Latest actions</h3><br>
                 <div class="table-responsive">
                 <table class="table table-bordered table-hover">
                     <thead><th>User</th><th>IP</th><th>Action</th><th>Time</th></thead>

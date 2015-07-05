@@ -77,7 +77,7 @@ $mysql = include '../../config.php';
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Main</title>
+        <title>Accounts | 1fx. # Server Panel</title>
         <script src="../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -171,7 +171,7 @@ $mysql = include '../../config.php';
                 }
                 
                 ?>
-            </table></div>
+            </table></div><br><br>
             <center><button type="button" onclick="location.href='new'" class="ui button blue">Add a new user</button></center>
             
             <h3>Latest actions</h3><br><div class="table-responsive">

@@ -59,12 +59,23 @@ $mysql = include '../../../config.php';
     if (!isset($_REQUEST['admin']) || !isset($_REQUEST['id'])) {
         die("<meta http-equiv=\"refresh\" content=\"0; url=../\" />");
     }
+    $id = intval(trim($_REQUEST['id']));
+    $admin = intval(trim($_REQUEST['admin'])) == 1? true:false;
+    $username = "";
+    $query = "";
+    if ($admin) {
+        $query = "SELECT username FROM swift_admin WHERE id=$id";
+    } else {
+        $query = "SELECT username FROM swift_users WHERE id=$id";
+    }
+    $result = mysqli_fetch_array(mysqli_query($mysql, $query));
+    $username = trim($result['username']);
 ?>
 <html>
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Add a new user - Swiftproject Admin Panel</title>
+        <title>Modify user <?php echo $username; ?> | 1fx. # Server Panel</title>
         <script src="../../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -119,19 +130,6 @@ $mysql = include '../../../config.php';
                 <h3>You can modify the account data below.</h3>
                 <h4>Setting the password is not mandatory, but account field must have some data before submitting.</h4><br>
                 <form method="post">
-                    <?php
-                        $id = intval(trim($_REQUEST['id']));
-                        $admin = intval(trim($_REQUEST['admin'])) == 1? true:false;
-                        $username = "";
-                        $query = "";
-                        if ($admin) {
-                            $query = "SELECT username FROM swift_admin WHERE id=$id";
-                        } else {
-                            $query = "SELECT username FROM swift_users WHERE id=$id";
-                        }
-                        $result = mysqli_fetch_array(mysqli_query($mysql, $query));
-                        $username = trim($result['username']);
-                    ?>
                     <input type="hidden" name="id" value="<?php echo $id; ?>">
                     <input type="hidden" name="admin" value="<?php echo $_REQUEST['admin']; ?>">
                     <div class="field">

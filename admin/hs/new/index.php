@@ -3,6 +3,7 @@
 session_start();
 $error = false;
 $mysql = include '../../../config.php';
+include '../../gs/options/server.php';
     if (!isset($_SESSION['username']) || !isset($_SESSION['lastactive']) || !isset($_SESSION['ip']) || !isset($_SESSION['admin'])) {
         die("<meta http-equiv=\"refresh\" content=\"0; url=../../login\" />");
     }
@@ -26,7 +27,7 @@ $mysql = include '../../../config.php';
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Add a new user - Swiftproject Admin Panel</title>
+        <title>Add a new host server | 1fx. # Server Panel</title>
         <script src="../../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -79,6 +80,10 @@ $mysql = include '../../../config.php';
                         $pass = $_REQUEST['password'];
                         $sshport = $_REQUEST['ssh'];
                         $name = $_REQUEST['name'];
+                        $cron = false;
+                        if (isset($_REQUEST['setCron'])) {
+                            $cron = true;
+                        }
                         $name = mysqli_real_escape_string($mysql, trim($name));
                         $sshport = intval($sshport);
                         if (!is_int($sshport) || $sshport == 0 || $sshport == 1) {
@@ -99,10 +104,10 @@ $mysql = include '../../../config.php';
                                 die(mysqli_error($mysql));
                             }
                             mysqli_query($mysql, "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$username', '$ip', 'Added new server with IP $srvip', '" . time() . ")')");
-                            
+                            addCronJob($srvip, $sshport, $user, $pass);
                             echo "<h2>Server with the IP $srvip has been added to the system!</h2>";
                         } else {
-                            echo "<h2>Couldn't SSH to server with the IP $ip with account $user.</h2>";
+                            echo "<h2>Couldn't SSH to server with the IP $srvip with account $user.</h2>";
                         }
                     } else {
                         echo "<h2>Enter the server information below</h2>";
@@ -136,7 +141,7 @@ $mysql = include '../../../config.php';
                         <input type="checkbox" name="setCron">
                         <label>Set up cron job</label>
                     </div><br>
-                    <label for="sel">Operation system</label>
+                    <label for="sel">Operating system</label>
                     <br>
                     <div id="sel" class="ui selection dropdown">
                         <input type="hidden" name="os" value="1">

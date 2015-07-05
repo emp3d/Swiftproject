@@ -2,14 +2,13 @@
 <?php
     if (file_exists("../config.php")) {
         die("<meta http-equiv=\"refresh\" content=\"0; url=../\" />");
-        echo "a";
     }
 ?>
 <html>
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Installation - Swiftproject</title>
+        <title>Installation - 1fx. # Server Panel</title>
         <script src="../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -50,7 +49,7 @@
                 </div>
             </div>
             <div class="ui form segment">
-                <h2>Welcome to Swiftproject!</h2>
+                <h2>Welcome to 1fx. # Server Panel!</h2>
                 <p>To run this application, you need to have MySQL with an account, password and a database. Please make sure you do have them before continuing.</p>
                 <a href="configuration"><button type="button" class="ui button blue block">Continue</button></a>
             </div>

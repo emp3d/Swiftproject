@@ -4,7 +4,7 @@
     $dbhost = "";
     $dbuser = "";
     $dbpass = "";
-    $db = ""; //
+    $db = ""; 
     if (file_exists("../../config.php")) {
         die("<meta http-equiv=\"refresh\" content=\"0; url=../../\" />");
     }
@@ -48,7 +48,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Configuration - Swiftproject</title>
+        <title>Configuration - 1fx. # Server Panel</title>
         <script src="../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">

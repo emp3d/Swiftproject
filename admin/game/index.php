@@ -22,7 +22,7 @@ $mysql = include '../../config.php';
     <head>
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <title>Main</title>
+        <title>Games | 1fx. # Server Panel</title>
         <script src="../../semantic/jquery-2.1.4.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -70,7 +70,7 @@ $mysql = include '../../config.php';
   <div class="ui form segment">
   <div class="table-responsive">
             <table class="table table-hover table-bordered">
-                <thead><th>Game name</th><th>Game location</th><th>Start command</th><th>Operation system</th><th>Options</th></thead>
+                <thead><th>Game name</th><th>Game location</th><th>Start command</th><th>Operating system</th><th>Options</th></thead>
                 <?php
                     $query = "SELECT * FROM swift_game ORDER BY id ASC";
                     $result = mysqli_query($mysql, $query);
