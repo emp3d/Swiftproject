@@ -49,33 +49,56 @@
             restartServer($hostIp, $sshport, $account, $accpass, $startcmd);
 	    mysqli_query($mysql, $query2);
         } else {
-            $servers = queryMaster();
+            $servers = query1fxMaster();
             $resolvedHostIP = gethostbyname($hostIp);
             $isServerUp = false;
             for ($i = 0; $i < sizeof($servers); $i++) {
-                if ($servers[$i][0] == $resolvedHostIP && $servers[$i][1] == $gameport) {
+                if (trim($servers[$i][0]) == trim($resolvedHostIP) && intval(trim($servers[$i][1])) == $gameport) {
                     $isServerUp = true;
                     break;
                 }
             }
             if (!$isServerUp) {
                 sleep(5);
-                $servers = queryMaster();
+                $servers = query1fxMaster();
+                
                 for ($i = 0; $i < sizeof($servers); $i++) {
-                    if ($servers[$i][0] == $resolvedHostIP && $servers[$i][1] == $gameport) {
+                    if (trim($servers[$i][0]) == trim($resolvedHostIP) && intval(trim($servers[$i][1])) == $gameport) {
                         $isServerUp = true;
                         break;
                     }
                 }
                 if (!$isServerUp) {
-                    $time = time();
-                    $con = ssh2_connect($hostIp, $sshport);
-                    ssh2_auth_password($con, $account, $accpass);
-                    $task = "(echo \"%CPU %MEM ARGS $(date)\" && ps -e -o pcpu,pmem,args --sort=pcpu | cut -d\" \" -f1-5 | tail) >> cpuusage.log";
-                    ssh2_exec($con, $task);
-                    $query2 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('CRON Task', '$hostIp', 'Restarted server $server (not visible on 1fx. Master)', '$time')";
-                    restartServer($hostIp, $sshport, $account, $accpass, $startcmd);
-                    mysqli_query($mysql, $query2);
+                    $servers = querySofMaster();
+                    $resolvedHostIP = gethostbyname($hostIp);
+                    $isServerUp = false;
+                    for ($i = 0; $i < sizeof($servers); $i++) {
+                        if (trim($servers[$i][0]) == trim($resolvedHostIP) && intval(trim($servers[$i][1])) == $gameport) {
+                            $isServerUp = true;
+                            break;
+                        }
+                    }
+                    if (!$isServerUp) {
+                        sleep(5);
+                        $servers = querySofMaster();
+
+                        for ($i = 0; $i < sizeof($servers); $i++) {
+                            if (trim($servers[$i][0]) == trim($resolvedHostIP) && intval(trim($servers[$i][1])) == $gameport) {
+                                $isServerUp = true;
+                                break;
+                            }
+                        }
+                        if (!$isServerUp) {
+                            $time = time();
+                            $con = ssh2_connect($hostIp, $sshport);
+                            ssh2_auth_password($con, $account, $accpass);
+                            $task = "(echo \"%CPU %MEM ARGS $(date)\" && ps -e -o pcpu,pmem,args --sort=pcpu | cut -d\" \" -f1-5 | tail) >> cpuusage.log";
+                            ssh2_exec($con, $task);
+                            $query2 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('CRON Task', '$hostIp', 'Restarted server $server (not visible on 1fx. Master)', '$time')";
+                            restartServer($hostIp, $sshport, $account, $accpass, $startcmd);
+                            mysqli_query($mysql, $query2);
+                        }
+                    }
                 }
             }
         }

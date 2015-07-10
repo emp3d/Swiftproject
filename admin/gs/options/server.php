@@ -72,11 +72,34 @@ function addCronJob($hostIp, $sshport, $admacc, $admpass) {
     stream_set_blocking($stream, true);
 }
 
-function queryMaster() {
+function query1fxMaster() {
     $str = "";
     $servers = Array();
     $con = fsockopen("udp://master.1fxmod.org", 20110);
     stream_set_timeout($con, 1);
+    fputs($con, "\xFF\xFF\xFF\xFFgetservers 2002 empty full");
+    while ($o = fgets($con)) {
+        $str .= $o;
+    }
+    fputs($con, "\xFF\xFF\xFF\xFFgetservers 2004 empty full");
+    while ($o = fgets($con)) {
+        $str .= $o;
+    }
+    for ($i = 0; $i < strlen($str) - 10; $i++) {
+        if ($str[$i] == "\\" && $str[$i + 7] == "\\") {
+            $ip = ord($str[$i + 1]) . "." . ord($str[$i + 2]) . "." . ord($str[$i + 3]) . "." . ord($str[$i + 4]);
+            $port = (ord($str[$i + 5]) << 8) + ord($str[$i + 6]);
+            array_push($servers, array($ip, $port));
+        }
+    }
+    return $servers;
+}
+
+function querySofMaster() {
+    $str = "";
+    $servers = Array();
+    $con = fsockopen("udp://master.sof2.ravensoft.com", 20110);
+    stream_set_timeout($con, 2);
     fputs($con, "\xFF\xFF\xFF\xFFgetservers 2002 empty full");
     while ($o = fgets($con)) {
         $str .= $o;
