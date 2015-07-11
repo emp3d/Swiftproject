@@ -5,6 +5,11 @@
     $mysql = include "$dir/../../../config.php";
     $query = "SELECT swift_servers.id AS srvid, swift_servers.account AS account, swift_servers.name AS srvname, swift_servers.password AS accpass, swift_servers.script AS startcmd, swift_servers.port AS gameport, swift_hosts.ip AS hostIp, swift_hosts.sshport AS sshport FROM swift_servers, swift_hosts WHERE swift_servers.active=1 AND swift_servers.host_id = swift_hosts.id";
     $result = mysqli_query($mysql, $query);
+    $master1fx = query1fxMaster();
+    $masterSof = querySofMaster();
+    sleep(5);
+    $master21fx = query1fxMaster();
+    $master2sof = querySofMaster();
     while ($row = mysqli_fetch_array($result)) {
         $srvid = intval(trim($row['srvid']));
         $account = trim($row['account']);
@@ -49,7 +54,7 @@
             restartServer($hostIp, $sshport, $account, $accpass, $startcmd);
 	    mysqli_query($mysql, $query2);
         } else {
-            $servers = query1fxMaster();
+            $servers = $master1fx;
             $resolvedHostIP = gethostbyname($hostIp);
             $isServerUp = false;
             for ($i = 0; $i < sizeof($servers); $i++) {
@@ -59,8 +64,7 @@
                 }
             }
             if (!$isServerUp) {
-                sleep(5);
-                $servers = query1fxMaster();
+                $servers = $master21fx;
                 
                 for ($i = 0; $i < sizeof($servers); $i++) {
                     if (trim($servers[$i][0]) == trim($resolvedHostIP) && intval(trim($servers[$i][1])) == $gameport) {
@@ -69,7 +73,7 @@
                     }
                 }
                 if (!$isServerUp) {
-                    $servers = querySofMaster();
+                    $servers = $masterSof;
                     $resolvedHostIP = gethostbyname($hostIp);
                     $isServerUp = false;
                     for ($i = 0; $i < sizeof($servers); $i++) {
@@ -79,8 +83,7 @@
                         }
                     }
                     if (!$isServerUp) {
-                        sleep(5);
-                        $servers = querySofMaster();
+                        $servers = $master2sof;
 
                         for ($i = 0; $i < sizeof($servers); $i++) {
                             if (trim($servers[$i][0]) == trim($resolvedHostIP) && intval(trim($servers[$i][1])) == $gameport) {
@@ -94,7 +97,7 @@
                             ssh2_auth_password($con, $account, $accpass);
                             $task = "(echo \"%CPU %MEM ARGS $(date)\" && ps -e -o pcpu,pmem,args --sort=pcpu | cut -d\" \" -f1-5 | tail) >> cpuusage.log";
                             ssh2_exec($con, $task);
-                            $query2 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('CRON Task', '$hostIp', 'Restarted server $server (not visible on 1fx. Master)', '$time')";
+                            $query2 = "INSERT INTO swift_logs (username, ip, action, time) VALUES ('CRON Task', '$hostIp', 'Restarted server $server (not visible on 1fx. Master and SoF Master)', '$time')";
                             restartServer($hostIp, $sshport, $account, $accpass, $startcmd);
                             mysqli_query($mysql, $query2);
                         }

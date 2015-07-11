@@ -108,7 +108,7 @@ function querySofMaster() {
     while ($o = fgets($con)) {
         $str .= $o;
     }
-    for ($i = 0; $i < strlen($str); $i++) {
+    for ($i = 0; $i < strlen($str) - 10; $i++) {
         if ($str[$i] == "\\" && $str[$i + 7] == "\\") {
             $ip = ord($str[$i + 1]) . "." . ord($str[$i + 2]) . "." . ord($str[$i + 3]) . "." . ord($str[$i + 4]);
             $port = (ord($str[$i + 5]) << 8) + ord($str[$i + 6]);
