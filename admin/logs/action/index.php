@@ -27,6 +27,7 @@ $page = setPage();
         if (intval($whereAmI) == 1) {
             $whereAmI = 0;
         }
+//        if ($whereAmI == 0) {return 0;}
         return ($whereAmI - 1) * 25;
     }
 ?>
@@ -89,15 +90,15 @@ $page = setPage();
                         $query = "SELECT Count(*) FROM swift_logs";
                         $result2 = mysqli_fetch_array(mysqli_query($mysql, $query));
                         $sqlPage = $result2[0] - $page;
-                        $query = "SELECT username, ip, action, time FROM swift_logs WHERE id < $sqlPage ORDER BY id DESC LIMIT 25";
+                        $query = "SELECT username, ip, action, time FROM swift_logs WHERE id <= $sqlPage ORDER BY id DESC LIMIT 25";
                         $result = mysqli_query($mysql, $query);
                         while ($row = mysqli_fetch_array($result)) {
                             $time = date("H:i, F j Y ", $row['time']);
                             echo "<tr><td>" . $row['username'] . "</td><td>" . $row['ip'] . "</td><td>" . $row['action'] . "</td><td>$time</td></tr>";
                         }
                         $count = $result2[0] / 25;
-                        $countint = $count % 25;
-                    
+                        $countint = ceil($result2[0] / 25);
+//                    echo "<h1>countint - $countint    count - $count</h1>";
                     ?>
             </table>
                 </div>
@@ -110,7 +111,7 @@ $page = setPage();
                         if ($rpage > 1) {
                             $href1 = $rpage - 1;
                         }
-                        if ($countint >= $rpage) {
+                        if ($countint > $rpage) {
                             $href2 = $rpage + 1;
                         }
                     ?>
@@ -119,7 +120,7 @@ $page = setPage();
                     </a>
                     <?php
                     
-                        while ($pagination <= $countint) {
+                        while ($pagination < $countint) {
                             $pagination++;
                             if ($pagination == $rpage) {
                                 echo "<a class=\"active item\">$pagination</a>";

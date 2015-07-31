@@ -11,6 +11,7 @@
     $master21fx = query1fxMaster();
     $master2sof = querySofMaster();
     while ($row = mysqli_fetch_array($result)) {
+        $localIp = gethostbyname(gethostname());
         $srvid = intval(trim($row['srvid']));
         $account = trim($row['account']);
         $accpass = trim($row['accpass']);
@@ -23,6 +24,12 @@
         $date = date("H:i, F j Y ", time());
         $startcmd = str_replace("{date}", $date, $startcmd);
 	$query2 = "";
+
+        $localIp = gethostbyname(gethostname());
+        if ($localIp != gethostbyname($hostIp)) {
+            continue;
+        }
+
         if (!checkStatus($hostIp, $sshport, $account, $accpass)) {
             //check that is something wrong, has the server been restarting continuously.
             $checkUser = "SELECT time FROM swift_logs WHERE action LIKE '%tarted server $server%' AND  username != 'CRON Task' ORDER BY id DESC LIMIT 1";

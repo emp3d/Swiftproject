@@ -96,7 +96,7 @@ $page = setPage();
                             echo "<tr><td>" . $row['user'] . "</td><td>" . $row['ip'] . "</td><td>$time</td></tr>";
                         }
                         $count = $result2[0] / 25;
-                        $countint = $count % 25;
+                        $countint = ceil($result2[0] / 25);
                     
                     ?>
             </table>
@@ -110,7 +110,7 @@ $page = setPage();
                         if ($rpage > 1) {
                             $href1 = $rpage - 1;
                         }
-                        if ($countint >= $rpage) {
+                        if ($countint > $rpage) {
                             $href2 = $rpage + 1;
                         }
                     ?>
@@ -119,7 +119,7 @@ $page = setPage();
                     </a>
                     <?php
                     
-                        while ($pagination <= $countint) {
+                        while ($pagination < $countint) {
                             $pagination++;
                             if ($pagination == $rpage) {
                                 echo "<a class=\"active item\">$pagination</a>";
