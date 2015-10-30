@@ -51,14 +51,14 @@ if (!($mysql instanceof mysqli)) {
         <meta charset="UTF-8">
         <meta name=viewport content="width=device-width, initial-scale=1">
         <title>Login - 1fx. # Server Panel</title>
-        <script src="../semantic/jquery-2.1.4.min.js"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-        <script src="../semantic/semantic.js"></script>
-        <script src="../semantic/components/dropdown.js"></script>
+        <script async src="../semantic/jquery-2.1.4.min.js"></script>
+        <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">-->
+        <script async src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <script async src="../semantic/semantic.js"></script>
+        <script async src="../semantic/components/dropdown.js"></script><!--
         <link href="../semantic/semantic.css" rel="stylesheet" />
-        <link href="../semantic/components/dropdown.css" rel="stylesheet" />
+        <link href="../semantic/components/dropdown.css" rel="stylesheet" />-->
     </head>
     <body>
         <div class="container"> 
@@ -81,4 +81,28 @@ if (!($mysql instanceof mysqli)) {
 
 </div>
     </body>
+<script>
+var cb = function() {
+        var l = document.createElement('link'); l.rel = 'stylesheet';
+        l.href = '../semantic/semantic.css';
+        var h = document.getElementsByTagName('head')[0]; h.parentNode.insertBefore(l, h);
+l = document.createElement('link'); l.rel = 'stylesheet';
+        l.href = '../semantic/components/dropdown.css';
+        h = document.getElementsByTagName('head')[0]; h.parentNode.insertBefore(l, h);
+l = document.createElement('link'); l.rel = 'stylesheet';
+        l.href = '../bootstrap/bootstrap.min.css';
+        h = document.getElementsByTagName('head')[0]; h.parentNode.insertBefore(l, h);
+l = document.createElement('link'); l.rel = 'stylesheet';
+        l.href = '../bootstrap/bootstrap-theme.min.css';
+        h = document.getElementsByTagName('head')[0]; h.parentNode.insertBefore(l, h);
+
+      };
+var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+          webkitRequestAnimationFrame || msRequestAnimationFrame;
+      if (raf) raf(cb);
+      else window.addEventListener('load', cb);
+
+</script>
 </html>
+
+

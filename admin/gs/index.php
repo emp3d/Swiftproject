@@ -23,10 +23,6 @@ include 'options/server.php';
     $ip = $_SESSION['ip'];
     
     if (isset($_REQUEST['reboot'])) {
-        $reason = $_REQUEST['reason'];
-        $reason = trim($reason);
-        $reason = htmlentities($reason);
-        mysqli_real_escape_string($mysql, $reason);
         $id = intval(trim($_REQUEST['reboot']));
         $query = "SELECT swift_servers.account AS account, swift_servers.name AS srvname, swift_servers.password AS accpass, swift_hosts.ip AS hostIp, swift_hosts.sshport AS sshport FROM swift_servers, swift_hosts WHERE swift_servers.host_id=swift_hosts.id AND swift_servers.id='$id'";
         $result = mysqli_fetch_array(mysqli_query($mysql, $query));
@@ -39,7 +35,7 @@ include 'options/server.php';
         $srvname = $result['srvname'];
         $admacc = $_SESSION['username'];
     
-        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Restarted server $srvname, reason - $reason', '" . time() . "')";
+        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Restarted server $srvname.', '" . time() . "')";
         mysqli_query($mysql, $log);
     } else if (isset($_REQUEST['start'])) {
         $id = intval(trim($_REQUEST['start']));
@@ -53,10 +49,6 @@ include 'options/server.php';
         $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Started server $srvname.', '" . time() . "')";
         mysqli_query($mysql, $log);
     } else if (isset($_REQUEST['stop'])) {
-        $reason = $_REQUEST['reason'];
-        $reason = trim($reason);
-        $reason = htmlentities($reason);
-        mysqli_real_escape_string($mysql, $reason);
         $id = intval(trim($_REQUEST['stop']));
         $query = "UPDATE swift_servers SET active=0 WHERE id=$id";
         mysqli_query($mysql, $query);
@@ -70,7 +62,7 @@ include 'options/server.php';
         $srvname = $result['srvname'];
         $admacc = $_SESSION['username'];
         
-        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Stopped server $srvname, reason - $reason', '" . time() . "')";
+        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Stopped server $srvname.', '" . time() . "')";
         mysqli_query($mysql, $log);
     }
     
@@ -86,8 +78,10 @@ include 'options/server.php';
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
         <script src="../../semantic/semantic.js"></script>
         <script src="../../semantic/components/dropdown.js"></script>
-        <link href="../../semantic/semantic.css" rel="stylesheet" />
+        <script src="../../tablesorter/jquery.tablesorter.js"></script>
+	<link href="../../semantic/semantic.css" rel="stylesheet" />
         <link href="../../semantic/components/dropdown.css" rel="stylesheet" />
+        <link href="../../tablesorter/tables.css" rel="stylesheet" />
     </head>
     <body>
         <nav class="navbar navbar-default">
@@ -132,8 +126,8 @@ include 'options/server.php';
       }
       ?>
   <div class="table-responsive">
-            <table class="table table-hover table-bordered">
-                <thead><th>Status</th><th>Name</th><th>Players</th><th>IP</th><th>Port</th><th>Host server</th><th>Owner</th><th>Account</th><th>Password</th><th>Manage</th></thead>
+            <table id="servers" class="table table-hover table-bordered tablesorter">
+                <thead><th>Status&nbsp;&nbsp;&nbsp;&nbsp;</th><th>Name&nbsp;&nbsp;&nbsp;&nbsp;</th><th>Players&nbsp;&nbsp;&nbsp;&nbsp;</th><th>IP&nbsp;&nbsp;&nbsp;&nbsp;</th><th>Port&nbsp;&nbsp;&nbsp;&nbsp;</th><th>Host server&nbsp;&nbsp;&nbsp;&nbsp;</th><th>Owner&nbsp;&nbsp;&nbsp;&nbsp;</th><th>Account&nbsp;&nbsp;&nbsp;&nbsp;</th><th>Password&nbsp;&nbsp;&nbsp;&nbsp;</th><th>Manage</th></thead><tbody>
                 <?php
                     //$query = "SELECT swift_servers.id AS srvId, swift_servers.port AS port, swift_hosts.ip AS ip, swift_hosts.sshport AS sshport, swift_servers.account AS acc, swift_servers.password AS pwd, swift_servers.name AS name, swift_users.username AS user, swift_hosts.name AS hostname FROM swift_servers, swift_users, swift_hosts WHERE swift_servers.owner_id=swift_users.id AND swift_servers.host_id=swift_hosts.id";
                     //$query = "SELECT * FROM swift_servers";
@@ -180,6 +174,7 @@ include 'options/server.php';
                     }
                 
                 ?>
+</tbody>
             </table>
       
   </div>
@@ -195,19 +190,27 @@ include 'options/server.php';
             location.href = 'delete/?id=' + i;
         }
     }
+$(document).ready(function() {
+  $("#servers").tablesorter({sortList: [[2,1]], headers: { 9:{sorter: false}, 2:{sorter: 'players'}}});
+});
+$.tablesorter.addParser({ 
+        id: 'players', 
+        is: function(s) { 
+            return false; 
+        }, 
+        format: function(s) { 
+            var x = s.split("/");
+            var num = parseInt(x[0].trim());
+            return num;
+			
+        }, 
+        type: 'numeric' 
+    }); 
     function serverAction(stop, srvid) {
         if (stop) {
-            var x = prompt("Please enter the reason why you want to stop this server.");
-            x = x.trim();
-            if (x.length !== 0) {
-                location.href='?stop=' + srvid + '&reason=' + x;
-            }
+                location.href='?stop=' + srvid;
         } else {
-            var x = prompt("Please enter the reason why you want to restart this server.");
-            x = x.trim();
-            if (x.length !== 0) {
-                location.href='?reboot=' + srvid + '&reason=' + x;
-            }
+                location.href='?reboot=' + srvid;
         }
     }
 jQuery('ul.nav li.dropdown').hover(function() {

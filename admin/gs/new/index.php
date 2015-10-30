@@ -88,7 +88,7 @@ include '../options/server.php';
                         $hostId = intval(trim($_REQUEST['host']));
                         $owner = intval(trim($_REQUEST['owner']));
                         $name = $_REQUEST['name'];
-                        $getPort = "SELECT port FROM swift_servers ORDER BY port DESC LIMIT 1";
+                        $getPort = "SELECT port FROM swift_servers WHERE host_id=$hostId ORDER BY port DESC LIMIT 1";
                         $result = mysqli_query($mysql, $getPort);
                         $row = mysqli_fetch_array($result);
                         $port = 0;

@@ -18,8 +18,12 @@ function startServer($hostIp, $sshport, $account, $accpass, $startcmd) {
 function stopServer($hostIp, $sshport, $account, $accpass) {
     $con = ssh2_connect($hostIp, $sshport);
     ssh2_auth_password($con, $account, $accpass);
-    $cmd2 = "screen -S $account -X quit";
-    ssh2_exec($con, $cmd2);
+    $cmd2 = "screen -ls | grep -o '[0-9]\{1,5\}.$account' | grep -o '[0-9]\{1,5\}' | head -1";
+	$stream = ssh2_exec($con, $cmd2);
+	stream_set_blocking($stream, true);
+	$output = fgets($stream);
+	$cmd3 = "kill $output";
+    ssh2_exec($con, $cmd3);
 }
 
 function restartServer($hostIp, $sshport, $account, $accpass, $startcmd) {

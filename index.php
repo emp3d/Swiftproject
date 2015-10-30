@@ -25,10 +25,6 @@ include 'admin/gs/options/server.php';
     $action = false;
     $msg = "";
     if (isset($_REQUEST['reboot'])) {
-        $reason = $_REQUEST['reason'];
-        $reason = trim($reason);
-        $reason = htmlentities($reason);
-        mysqli_real_escape_string($mysql, $reason);
         $action = true;
         $msg = "Server has been rebooted.";
         $id = intval(trim($_REQUEST['reboot']));
@@ -45,7 +41,7 @@ include 'admin/gs/options/server.php';
         $srvname = $result['name'];
         $admacc = $_SESSION['user'];
     
-        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Restarted server $srvname, reason - $reason', '" . time() . "')";
+        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Restarted server $srvname.', '" . time() . "')";
         mysqli_query($mysql, $log);
     } else if (isset($_REQUEST['start'])) {
         $action = true;
@@ -61,10 +57,6 @@ include 'admin/gs/options/server.php';
         $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Started server $srvname.', '" . time() . "')";
         mysqli_query($mysql, $log);
     } else if (isset($_REQUEST['stop'])) {
-        $reason = $_REQUEST['reason'];
-        $reason = trim($reason);
-        $reason = htmlentities($reason);
-        mysqli_real_escape_string($mysql, $reason);
         $action = true;
         $msg = "Server has been stopped.";
         $id = intval(trim($_REQUEST['stop']));
@@ -82,7 +74,7 @@ include 'admin/gs/options/server.php';
         $srvname = $result['name'];
         $admacc = $_SESSION['user'];
     
-        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Stopped server $srvname, reason - $reason', '" . time() . "')";
+        $log = "INSERT INTO swift_logs(username, ip, action, time) VALUES ('$admacc', '$ip', 'Stopped server $srvname.', '" . time() . "')";
         mysqli_query($mysql, $log);
     }
     
@@ -211,17 +203,9 @@ include 'admin/gs/options/server.php';
         <script>
             function serverAction(stop, srvid) {
                 if (stop) {
-                    var x = prompt("Please enter the reason why you want to stop this server.");
-                    x = x.trim();
-                    if (x.length !== 0) {
-                        location.href='?stop=' + srvid + '&reason=' + x;
-                    }
+                        location.href='?stop=' + srvid;
                 } else {
-                    var x = prompt("Please enter the reason why you want to restart this server.");
-                    x = x.trim();
-                    if (x.length !== 0) {
-                        location.href='?reboot=' + srvid + '&reason=' + x;
-                    }
+                        location.href='?reboot=' + srvid;
                 }
             }
         </script>
